@@ -1,5 +1,7 @@
-<mat-card class="chat-message" [class.mine]="message.author === 'me'">
+<mat-card class="message-card" [ngClass]="{'user': message.sender === 'user', 'bot': message.sender === 'bot'}">
   <mat-card-content>
-    <p>{{message.text}}</p>
+    <mat-icon *ngIf="message.sender === 'user'">account_circle</mat-icon>
+    <mat-icon *ngIf="message.sender === 'bot'">contact_support</mat-icon>
+    {{ message.text }}
   </mat-card-content>
 </mat-card>

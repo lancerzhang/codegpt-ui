@@ -1,0 +1,15 @@
+<mat-toolbar class="top-toolbar">
+    <button mat-stroked-button class="new-chat-button">
+        <mat-icon>add</mat-icon>
+        New Chat
+    </button>
+</mat-toolbar>
+<mat-list class="chat-history">
+    <mat-list-item *ngFor="let chat of chatHistory">
+        <!-- Display chat summary here -->
+    </mat-list-item>
+</mat-list>
+<mat-divider class="nav-divider"></mat-divider>
+<mat-toolbar color="primary" class="bottom-toolbar">
+    {{ username }}
+</mat-toolbar>

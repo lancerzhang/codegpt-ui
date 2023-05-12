@@ -1,0 +1,20 @@
+.input-container {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    bottom: 0;
+    width: 75%;
+}
+
+.input-field {
+    width: 90%;
+    background-color: #3c3d4a;
+}
+
+.input-field mat-label {
+    color: white;
+}
+
+.input-field .mat-icon-button {
+    color: white;
+}

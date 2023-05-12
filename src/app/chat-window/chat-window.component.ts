@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { ChatService } from '../services/chat.service';
 
 @Component({
   selector: 'app-chat-window',
   templateUrl: './chat-window.component.html',
-  styleUrls: ['./chat-window.component.css']
+  styleUrls: ['./chat-window.component.scss']
 })
 export class ChatWindowComponent {
   messages = [
@@ -13,13 +13,13 @@ export class ChatWindowComponent {
 
   inputMessage = '';
 
-  constructor(private http: HttpClient) { }
+  constructor(private chatService: ChatService) { }
 
   sendMessage() {
     this.messages.push({ text: this.inputMessage, sender: 'user' });
     this.inputMessage = '';
-    this.http.post('http://your-api-url.com', { message: this.inputMessage }).subscribe((response: any) => {
-      this.messages.push({ text: response.message, sender: 'bot' });
+    this.chatService.getResponse(this.inputMessage).subscribe(response => {
+      this.messages.push({ text: response, sender: 'bot' });
     });
   }
 }

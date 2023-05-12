@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
-import { ChatHistoryComponent } from './chat-history/chat-history.component';
 import { ChatMessageComponent } from './chat-message/chat-message.component';
 import { ChatWindowComponent } from './chat-window/chat-window.component';
+import { NavColComponent } from './nav-col/nav-col.component';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -20,7 +22,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     AppComponent,
     ChatMessageComponent,
     ChatWindowComponent,
-    ChatHistoryComponent
+    NavColComponent
   ],
   imports: [
     HttpClientModule,
@@ -32,7 +34,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatFormFieldModule,
     MatInputModule,
     MatToolbarModule,
-    MatListModule
+    MatListModule,
+    MatIconModule,
+    MatDividerModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,13 @@
+.app-container {
+    display: flex;
+}
+
+.nav-col {
+    flex: 1;
+    background-color: #1d1e20;
+}
+
+.chat-window {
+    flex: 3;
+    background-color: #2e2e38;
+}
