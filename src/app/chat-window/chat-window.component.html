@@ -1,0 +1,14 @@
+<mat-card class="chat-window">
+  <mat-card-content>
+    <div *ngFor="let message of messages">
+      <app-chat-message [message]="message"></app-chat-message>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <mat-form-field class="input-field">
+      <input matInput [(ngModel)]="inputMessage" (keydown.enter)="sendMessage()"
+        placeholder="Type your message here...">
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="sendMessage()">Send</button>
+  </mat-card-actions>
+</mat-card>
