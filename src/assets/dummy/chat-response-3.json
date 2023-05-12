@@ -1,0 +1,27 @@
+{
+    "msg": "success to trigger the API",
+    "code": "00000",
+    "data": {
+        "id": "chatcmpl-7FMw5nBSebsOcz0DflieR4kGC62Rj",
+        "object": "chat.completion",
+        "created": 1.683897441E9,
+        "model": "gpt-35-turbo",
+        "choices": [
+            {
+                "index": 0.0,
+                "finish_reason": "stop",
+                "message": {
+                    "role": "assistant",
+                    "content": "Sure, here's an example of how to write a function in JavaScript that sums up all the elements in an array:\n\n```javascript\nfunction sumArray(arr) {\n let sum = 0;\n for (let i = 0; i < arr.length; i++) {\n sum += arr[i];\n }\n return sum;\n}\n```\n\nThis function takes an array as an argument and initializes a variable `sum` to 0. It then loops through each element in the array and adds it to the `sum` variable. Finally, it returns the total sum of all the elements in the array."
+                }
+            }
+        ],
+        "usage": {
+            "completion_tokens": 183.0,
+            "prompt_tokens": 25.0,
+            "total_tokens": 208.0
+        }
+    },
+    "timestamp": 1683897447785,
+    "requestId": "72ae5d90-d0c1-4342-9394-b1ea5beda43f"
+}

@@ -4,8 +4,8 @@
 
 <div class="input-container">
   <mat-form-field appearance="fill" class="input-field">
-    <mat-label>Send a message</mat-label>
-    <input matInput [(ngModel)]="inputMessage" (keydown.enter)="sendMessage()">
+    <textarea matInput [(ngModel)]="inputMessage" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+      cdkAutosizeMinRows="1" cdkAutosizeMaxRows="10" placeholder="Send a message."></textarea>
     <button mat-icon-button matSuffix (click)="sendMessage()" aria-label="Send">
       <mat-icon>send</mat-icon>
     </button>

@@ -16,10 +16,12 @@ export class ChatWindowComponent {
   constructor(private chatService: ChatService) { }
 
   sendMessage() {
-    this.messages.push({ text: this.inputMessage, sender: 'user' });
-    this.inputMessage = '';
-    this.chatService.getResponse(this.inputMessage).subscribe(response => {
-      this.messages.push({ text: response, sender: 'bot' });
-    });
+    if (this.inputMessage) {
+      this.messages.push({ text: this.inputMessage, sender: 'user' });
+      this.inputMessage = '';
+      this.chatService.getResponse(this.inputMessage).subscribe(response => {
+        this.messages.push({ text: response, sender: 'bot' });
+      });
+    }
   }
 }
