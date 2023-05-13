@@ -21,6 +21,7 @@ export class ChatWindowComponent implements OnInit {
 
   async ngOnInit() {
     const conversationId = this.route.snapshot.paramMap.get('conversationId');
+    console.log("conversationId", conversationId);
     if (conversationId) {
       this.conversationId = Number(conversationId);
       this.messages = await this.chatDb.getMessages(this.conversationId);
