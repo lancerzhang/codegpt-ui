@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 import { MarkdownModule } from 'ngx-markdown';
 import { AppComponent } from './app.component';
 import { ChatMessageComponent } from './chat-message/chat-message.component';
@@ -41,6 +42,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatDividerModule,
     MatProgressSpinnerModule,
     MarkdownModule.forRoot(),
+    RouterModule.forRoot([{ path: 'chat/:conversationId', component: ChatWindowComponent }])
   ],
   providers: [],
   bootstrap: [AppComponent]
