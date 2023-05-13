@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChatDbService } from '../services/chat-db.service';
 import { ChatService } from '../services/chat.service';
@@ -8,28 +8,24 @@ import { ChatService } from '../services/chat.service';
   templateUrl: './chat-window.component.html',
   styleUrls: ['./chat-window.component.scss']
 })
-export class ChatWindowComponent implements OnInit {
+export class ChatWindowComponent {
   messages: { text: string, sender: string, isLoading?: boolean }[] = [];
   inputMessage: string = '';
   conversationId: number;
 
   constructor(
+    private route: ActivatedRoute,
     private chatService: ChatService,
-    private chatDb: ChatDbService,
-    private route: ActivatedRoute
+    private chatDb: ChatDbService
   ) { }
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const conversationId = params.get('conversationId');
-      console.log("conversationId", conversationId)
-      // if (conversationId) {
-      //   this.conversationId = Number(conversationId);
-      //   this.messages = await this.chatDb.getMessages(this.conversationId);
-      // }
-    });
+  async ngOnInit() {
+    const conversationId = this.route.snapshot.paramMap.get('conversationId');
+    if (conversationId) {
+      this.conversationId = Number(conversationId);
+      this.messages = await this.chatDb.getMessages(this.conversationId);
+    }
   }
-
 
   async sendMessage() {
     if (this.inputMessage) {
