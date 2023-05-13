@@ -19,14 +19,17 @@ export class ChatWindowComponent implements OnInit {
     private route: ActivatedRoute
   ) { }
 
-  async ngOnInit() {
-    const conversationId = this.route.snapshot.paramMap.get('conversationId');
-    console.log("conversationId", conversationId);
-    if (conversationId) {
-      this.conversationId = Number(conversationId);
-      this.messages = await this.chatDb.getMessages(this.conversationId);
-    }
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const conversationId = params.get('conversationId');
+      console.log("conversationId", conversationId)
+      // if (conversationId) {
+      //   this.conversationId = Number(conversationId);
+      //   this.messages = await this.chatDb.getMessages(this.conversationId);
+      // }
+    });
   }
+
 
   async sendMessage() {
     if (this.inputMessage) {
