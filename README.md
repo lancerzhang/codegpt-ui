@@ -28,3 +28,8 @@ https://github.com/f/awesome-chatgpt-prompts
 https://github.com/Yidadaa/ChatGPT-Next-Web
 
 https://github.com/mckaywrigley/chatbot-ui
+
+https://favicon.io/favicon-generator/
+
+https://cobusgreyling.medium.com/when-using-the-chatgpt-api-users-will-have-to-manage-the-context-ba5869238913
+
