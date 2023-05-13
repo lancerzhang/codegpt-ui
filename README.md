@@ -21,7 +21,6 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 - [ ] Compresses chat history to support long conversations.
 
 ## TODO tenical
--  [ ] Upgrade angular and ngx-markdown to 16.0.0, to support highlight and copy clipboard.
 
 ## Reference
 https://github.com/f/awesome-chatgpt-prompts
