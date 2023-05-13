@@ -30,9 +30,10 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/prismjs/plugins/line-highlight/prism-line-highlight.css",
               "node_modules/@angular/material/prebuilt-themes/purple-green.css",
+              "node_modules/prismjs/plugins/line-highlight/prism-line-highlight.css",
               "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.css",
+              "node_modules/prismjs/themes/prism-okaidia.css",
               "src/styles.scss"
             ],
             "scripts": [
