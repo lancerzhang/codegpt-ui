@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MarkdownModule } from 'ngx-markdown';
 import { AppComponent } from './app.component';
 import { ChatMessageComponent } from './chat-message/chat-message.component';
 import { ChatWindowComponent } from './chat-window/chat-window.component';
@@ -39,6 +40,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatIconModule,
     MatDividerModule,
     MatProgressSpinnerModule,
+    MarkdownModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]

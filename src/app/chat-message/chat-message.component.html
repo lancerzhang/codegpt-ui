@@ -3,6 +3,6 @@
     <mat-icon class="message-icon" *ngIf="message.sender === 'user'">account_circle</mat-icon>
     <mat-icon class="message-icon" *ngIf="message.sender === 'bot' && !message.isLoading">contact_support</mat-icon>
     <mat-spinner *ngIf="message.isLoading" [diameter]="24"></mat-spinner>
-    {{message.text}}
+    <markdown lineHighlight lineNumbers clipboard [data]="message.text"></markdown>
   </mat-card-content>
 </mat-card>
