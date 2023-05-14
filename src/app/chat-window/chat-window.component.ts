@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChatDbService } from '../services/chat-db.service';
 import { ChatService } from '../services/chat.service';
+import { PromptService } from '../services/prompt.service';
 import { SharedService } from '../services/shared.service';
 
 @Component({
@@ -13,8 +14,10 @@ export class ChatWindowComponent {
   messages: { text: string, sender: string, isLoading?: boolean }[] = [];
   inputMessage: string = '';
   conversationId: number;
+  promptOptions: { id: string; act: string; prompt: string }[] = [];
 
   constructor(
+    private promptService: PromptService,
     private sharedService: SharedService,
     private route: ActivatedRoute,
     private chatService: ChatService,
@@ -56,6 +59,19 @@ export class ChatWindowComponent {
       });
 
       this.inputMessage = '';
+      this.promptOptions = [];
     }
+  }
+
+  onInputChange(): void {
+    console.log("this.inputMessage", this.inputMessage)
+    if (this.inputMessage.startsWith('/')) {
+      const query = this.inputMessage.slice(1);
+      this.promptOptions = this.promptService.searchPrompts(query);
+    }
+  }
+
+  onOptionSelected(event: any): void {
+    this.inputMessage = event.option.value;
   }
 }

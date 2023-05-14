@@ -13,6 +13,7 @@ import { EditChatDialogComponent } from './edit-chat-dialog/edit-chat-dialog.com
 import { HomeComponent } from './home/home.component';
 import { NavColComponent } from './nav-col/nav-col.component';
 
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -51,6 +52,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatProgressSpinnerModule,
     MarkdownModule.forRoot(),
     MatDialogModule,
+    MatAutocompleteModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,11 +1,17 @@
 <mat-list *ngFor="let message of messages">
   <app-chat-message [message]="message"></app-chat-message>
 </mat-list>
-
+<div class="divider-box"></div>
 <div class="input-container">
   <mat-form-field appearance="fill" class="input-field">
-    <textarea matInput [(ngModel)]="inputMessage" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
-      cdkAutosizeMinRows="1" cdkAutosizeMaxRows="10" placeholder="Send a message."></textarea>
+    <textarea matInput [matAutocomplete]="auto" [(ngModel)]="inputMessage" (ngModelChange)="onInputChange()"
+      cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="10"
+      placeholder="Send a message. / to search prompts"></textarea>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+      <mat-option *ngFor="let option of promptOptions" [value]="option.prompt">
+        {{ option.prompt }}
+      </mat-option>
+    </mat-autocomplete>
     <button mat-icon-button matSuffix (click)="sendMessage()" aria-label="Send">
       <mat-icon>send</mat-icon>
     </button>
