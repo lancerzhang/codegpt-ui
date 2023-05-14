@@ -8,6 +8,8 @@
 }
 
 .chat-window {
+    height: 100vh;
+    overflow-y: auto;
     flex: 3;
     background-color: #2e2e38;
 }

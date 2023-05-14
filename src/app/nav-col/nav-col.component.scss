@@ -20,8 +20,22 @@
     overflow-y: auto;
 }
 
-.history-item {
+.chat-item {
     display: flex;
+    justify-content: space-between;
+}
+
+.chat-title {
+    display: flex;
+}
+
+.left-icon {
+    padding-right: 8px;
+}
+
+.mid-icon {
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .nav-divider {

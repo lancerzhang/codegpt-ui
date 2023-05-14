@@ -7,11 +7,13 @@
 <mat-list class="chat-history">
     <mat-list-item *ngFor="let chat of chatHistory" (click)="selectChat(chat)"
         [class.selected]="selectedChat?.id === chat.id">
-        <div class="history-item">
-            <mat-icon matListIcon>chat</mat-icon>
-            <div>{{ chat.title }}</div>
-            <div *ngIf="showIcons(chat)" class="icons">
-                <mat-icon (click)="editChat(chat); $event.stopPropagation()">edit</mat-icon>
+        <div class="chat-item">
+            <div class="chat-title">
+                <mat-icon class="left-icon">chat</mat-icon>
+                <div>{{ chat.title }}</div>
+            </div>
+            <div *ngIf="showAction(chat)">
+                <mat-icon class="mid-icon" (click)="editChat(chat); $event.stopPropagation()">edit</mat-icon>
                 <mat-icon (click)="deleteChat(chat.id); $event.stopPropagation()">delete</mat-icon>
             </div>
         </div>

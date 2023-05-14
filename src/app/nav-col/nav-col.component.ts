@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { EditChatDialogComponent } from '../edit-chat-dialog/edit-chat-dialog.component';
 import { ChatDbService } from '../services/chat-db.service';
+import { SharedService } from '../services/shared.service';
 
 @Component({
   selector: 'app-nav-col',
@@ -16,14 +17,25 @@ export class NavColComponent implements OnInit {
   conversationId: number;
   selectedChat: any;
 
-  constructor(private dialog: MatDialog, private router: Router, private route: ActivatedRoute, private chatDbService: ChatDbService) { }
+  constructor(private dialog: MatDialog,
+    private sharedService: SharedService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private chatDbService: ChatDbService) { }
 
   ngOnInit(): void {
-    const conversationId = this.route.snapshot.paramMap.get('conversationId');
-    if (conversationId) {
-      this.conversationId = Number(conversationId);
-    }
-    this.loadChats();
+    this.route.params.subscribe(params => {
+      this.conversationId = +params['conversationId'];
+      // Reload data here
+      const conversationId = this.route.snapshot.paramMap.get('conversationId');
+      if (conversationId) {
+        this.conversationId = Number(conversationId);
+      }
+      this.loadChats();
+    });
+    this.sharedService.getRefreshChatHistory().subscribe(() => {
+      this.loadChats();
+    });
   }
 
   newChat(): void {
@@ -65,7 +77,7 @@ export class NavColComponent implements OnInit {
     });
   }
 
-  showIcons(chat: any): boolean {
+  showAction(chat: any): boolean {
     return this.conversationId === chat.id;
   }
 
