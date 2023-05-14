@@ -11,13 +11,17 @@
     border-radius: 6px;
 }
 
+.new-chat-button .mat-icon-button {
+    color: #585860;
+}
+
 .chat-history {
     height: calc(100vh - 129px);
     overflow-y: auto;
 }
 
-.new-chat-button .mat-icon-button {
-    color: #585860;
+.history-item {
+    display: flex;
 }
 
 .nav-divider {
@@ -27,6 +31,7 @@
 }
 
 .bottom-toolbar {
+    size: 16px;
     position: sticky;
     bottom: 0;
     width: 100%;

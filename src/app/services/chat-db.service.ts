@@ -32,4 +32,11 @@ export class ChatDbService extends Dexie {
   async getMessages(conversationId: number) {
     return await this.messages.where('conversationId').equals(conversationId).toArray();
   }
+  async getConversationsSortedByDate(): Promise<any[]> {
+    return await this.conversations
+      .orderBy('lastUpdatedAt')
+      .reverse()
+      .toArray();
+  }
+
 }

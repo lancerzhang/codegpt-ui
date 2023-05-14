@@ -1,12 +1,20 @@
 <mat-toolbar class="top-toolbar">
-    <button mat-stroked-button class="new-chat-button">
+    <button mat-stroked-button class="new-chat-button" (click)="newChat()">
         <mat-icon>add</mat-icon>
         New Chat
     </button>
 </mat-toolbar>
 <mat-list class="chat-history">
-    <mat-list-item *ngFor="let chat of chatHistory">
-        <!-- Display chat summary here -->
+    <mat-list-item *ngFor="let chat of chatHistory" (click)="selectChat(chat)"
+        [class.selected]="selectedChat?.id === chat.id">
+        <div class="history-item">
+            <mat-icon matListIcon>chat</mat-icon>
+            <div>{{ chat.title }}</div>
+            <div *ngIf="showIcons(chat)" class="icons">
+                <mat-icon (click)="editChat(chat)">edit</mat-icon>
+                <mat-icon (click)="deleteChat(chat)">delete</mat-icon>
+            </div>
+        </div>
     </mat-list-item>
 </mat-list>
 <mat-divider class="nav-divider"></mat-divider>
