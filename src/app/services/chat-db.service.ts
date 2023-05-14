@@ -1,4 +1,3 @@
-// chat-db.service.ts
 import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
 
