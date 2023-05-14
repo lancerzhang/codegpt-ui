@@ -32,11 +32,20 @@ export class ChatDbService extends Dexie {
   async getMessages(conversationId: number) {
     return await this.messages.where('conversationId').equals(conversationId).toArray();
   }
+
   async getConversationsSortedByDate(): Promise<any[]> {
     return await this.conversations
       .orderBy('lastUpdatedAt')
       .reverse()
       .toArray();
+  }
+
+  async updateChatTitle(chatId: number, newTitle: string) {
+    return await this.conversations.update(chatId, { title: newTitle });
+  }
+
+  async deleteChat(chatId: number) {
+    return await this.conversations.delete(chatId);
   }
 
 }

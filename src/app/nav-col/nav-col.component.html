@@ -11,8 +11,8 @@
             <mat-icon matListIcon>chat</mat-icon>
             <div>{{ chat.title }}</div>
             <div *ngIf="showIcons(chat)" class="icons">
-                <mat-icon (click)="editChat(chat)">edit</mat-icon>
-                <mat-icon (click)="deleteChat(chat)">delete</mat-icon>
+                <mat-icon (click)="editChat(chat); $event.stopPropagation()">edit</mat-icon>
+                <mat-icon (click)="deleteChat(chat.id); $event.stopPropagation()">delete</mat-icon>
             </div>
         </div>
     </mat-list-item>

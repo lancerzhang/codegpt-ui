@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { EditChatDialogComponent } from '../edit-chat-dialog/edit-chat-dialog.component';
 import { ChatDbService } from '../services/chat-db.service';
 
 @Component({
@@ -13,14 +16,14 @@ export class NavColComponent implements OnInit {
   conversationId: number;
   selectedChat: any;
 
-  constructor(private router: Router, private route: ActivatedRoute, private chatDbService: ChatDbService) { }
+  constructor(private dialog: MatDialog, private router: Router, private route: ActivatedRoute, private chatDbService: ChatDbService) { }
 
   ngOnInit(): void {
     const conversationId = this.route.snapshot.paramMap.get('conversationId');
     if (conversationId) {
       this.conversationId = Number(conversationId);
     }
-    this.loadConversations();
+    this.loadChats();
   }
 
   newChat(): void {
@@ -31,20 +34,42 @@ export class NavColComponent implements OnInit {
     this.router.navigate(['/chat', chat.id]);
   }
 
+  editChat(chat: { id: number, title: string }) {
+    const dialogRef = this.dialog.open(EditChatDialogComponent, {
+      data: { chatTitle: chat.title } // pass current title to dialog
+    });
 
-  editChat(chat: any): void {
-    // Implement your edit chat logic here
+    dialogRef.afterClosed().subscribe(newTitle => {
+      if (newTitle) {
+        this.chatDbService.updateChatTitle(chat.id, newTitle).then(() => {
+          this.loadChats(); // reload chats after editing
+        });
+      }
+    });
   }
 
-  deleteChat(chat: any): void {
-    // Implement your delete chat logic here
+  deleteChat(chatId: number) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { actionName: "Delete", reourceName: "chat" }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.chatDbService.deleteChat(chatId).then(() => {
+          this.loadChats(); // reload chats after deleting
+          if (this.router.url === `/chat/${chatId}`) {
+            this.newChat();
+          }
+        });
+      }
+    });
   }
 
   showIcons(chat: any): boolean {
     return this.conversationId === chat.id;
   }
 
-  async loadConversations() {
+  async loadChats() {
     this.chatHistory = await this.chatDbService.getConversationsSortedByDate();
   }
 }
