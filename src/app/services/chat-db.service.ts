@@ -7,18 +7,21 @@ import Dexie from 'dexie';
 export class ChatDbService extends Dexie {
   messages: Dexie.Table<any, number>;
   conversations: Dexie.Table<any, number>;
+  prompts: Dexie.Table<any, number>;
 
   constructor() {
     super('ChatDatabase');
     this.version(1).stores({
-      messages: '++id, conversationId, sender, createdAt, text',
-      conversations: '++id, title, lastUpdatedAt'
+      messages: '++id, conversationId, sender, text, isPrompt, createdAt',
+      conversations: '++id, title, lastUpdatedAt',
+      prompts: '++id, act, prompt'
     });
     this.messages = this.table('messages');
     this.conversations = this.table('conversations');
+    this.prompts = this.table('prompts');
   }
 
-  async createMessage(message: { conversationId: number, sender: string, text: string, createdAt?: Date }) {
+  async createMessage(message: { id?: number, conversationId: number, sender: string, text: string, createdAt?: Date }) {
     message['createdAt'] = new Date();
     return await this.messages.add(message);
   }
@@ -26,6 +29,10 @@ export class ChatDbService extends Dexie {
   async createConversation(conversation: { title: string, lastUpdatedAt?: Date }) {
     conversation['lastUpdatedAt'] = new Date();
     return await this.conversations.add(conversation);
+  }
+
+  async createPrompt(prompt: { act: string, prompt: string }) {
+    return await this.prompts.add(prompt);
   }
 
   async getMessages(conversationId: number) {
@@ -41,6 +48,10 @@ export class ChatDbService extends Dexie {
 
   async updateChatTitle(chatId: number, newTitle: string) {
     return await this.conversations.update(chatId, { title: newTitle });
+  }
+
+  async updateIsPrompt(messageId: number, isPrompt: boolean) {
+    return await this.messages.update(messageId, { isPrompt: isPrompt });
   }
 
   async deleteChat(chatId: number) {

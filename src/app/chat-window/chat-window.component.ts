@@ -12,7 +12,7 @@ import { environment } from './../../environments/environment';
   styleUrls: ['./chat-window.component.scss']
 })
 export class ChatWindowComponent {
-  messages: { text: string, sender: string, numTokens: number, isLoading?: boolean }[] = [];
+  messages: { id?: number, sender: string, text: string, numTokens: number, isPrompt: boolean, isLoading?: boolean }[] = [];
   inputMessage: string = '';
   conversationId: number;
   promptOptions: { id: string; act: string; prompt: string }[] = [];
@@ -43,31 +43,31 @@ export class ChatWindowComponent {
 
   async sendMessage() {
     if (this.inputMessage) {
-      const loadingMessage = { text: '', sender: 'bot', numTokens: 0, isLoading: true };
-      const userMessage = { text: this.inputMessage, sender: 'user', numTokens: 0 };
-
-      // Prepare the input for getResponse
-      const messageArray = this.prepareMessages(this.inputMessage);
-
-      this.messages.push(userMessage);
-      this.messages.push(loadingMessage);
-
       if (!this.conversationId) {
         const title: string = this.inputMessage.slice(0, 30);
         this.conversationId = await this.chatDb.createConversation({ title });
         this.sharedService.emitRefreshChatHistory();
       }
-      this.chatDb.createMessage({ conversationId: this.conversationId, sender: 'user', text: this.inputMessage });
+
+      // Prepare the input for getResponse
+      const messageArray = this.prepareMessages(this.inputMessage);
+      const userMessageId: number = await this.chatDb.createMessage({ conversationId: this.conversationId, sender: 'user', text: this.inputMessage });
+      const userMessage = { id: userMessageId, sender: 'user', text: this.inputMessage, numTokens: 0, isPrompt: false };
 
       // Send the array of messages to getResponse
-      this.chatApiService.getResponse(messageArray).subscribe((response: any) => {
+      this.chatApiService.getResponse(messageArray).subscribe(async (response: any) => {
         const respContent = response.data.choices[0].message.content;
-        userMessage.numTokens = response.data.usage.prompt_tokens;
-        loadingMessage.numTokens = response.data.usage.completion_tokens;
 
-        loadingMessage.text = respContent;
-        loadingMessage.isLoading = false;
-        this.chatDb.createMessage({ conversationId: this.conversationId, sender: 'bot', text: respContent });
+        const botMessageId: number = await this.chatDb.createMessage({ conversationId: this.conversationId, sender: 'bot', text: respContent });
+        const botMessage = { id: botMessageId, sender: 'bot', text: '', numTokens: 0, isPrompt: false, isLoading: true };
+
+        userMessage.numTokens = response.data.usage.prompt_tokens;
+        botMessage.numTokens = response.data.usage.completion_tokens;
+        botMessage.text = respContent;
+        botMessage.isLoading = false;
+
+        this.messages.push(userMessage);
+        this.messages.push(botMessage);
       });
 
       this.inputMessage = '';
@@ -112,4 +112,11 @@ export class ChatWindowComponent {
   onOptionSelected(event: any): void {
     this.inputMessage = event.option.value;
   }
+
+  addPrompt(message: any) {
+    message.isPrompt = true;
+    this.chatDb.updateIsPrompt(message.id, true);
+    this.promptService.addPrompt({ act: '', prompt: message.text });
+  }
+
 }
