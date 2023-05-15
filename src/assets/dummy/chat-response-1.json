@@ -12,7 +12,7 @@
                 "finish_reason": "stop",
                 "message": {
                     "role": "assistant",
-                    "content": "Sure, here's an example Java code for summing up an array:\n\n```\npublic class SumArray {\n public static void main(String[] args) {\n int[] arr = {1, 2, 3, 4, 5};\n int sum = 0;\n \n for (int i = 0; i < arr.length; i++) {\n sum += arr[i];\n }\n \n System.out.println(\"The sum of the array is: \" + sum);\n }\n}\n```\n\nIn this code, we first declare an integer array `arr` with some values. We then declare an integer variable `sum` and initialize it to 0.\n\nWe then use a `for` loop to iterate through each element of the array and add it to the `sum` variable. Finally, we print out the sum of the array using `System.out.println()`."
+                    "content": "Sure, here's an example Java code for summing up an array:\n\n```java\npublic class SumArray {\n public static void main(String[] args) {\n int[] arr = {1, 2, 3, 4, 5};\n int sum = 0;\n \n for (int i = 0; i < arr.length; i++) {\n sum += arr[i];\n }\n \n System.out.println(\"The sum of the array is: \" + sum);\n }\n}\n```\n\nIn this code, we first declare an integer array `arr` with some values. We then declare an integer variable `sum` and initialize it to 0.\n\nWe then use a `for` loop to iterate through each element of the array and add it to the `sum` variable. Finally, we print out the sum of the array using `System.out.println()`."
                 }
             }
         ],
