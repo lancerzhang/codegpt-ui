@@ -43,28 +43,17 @@ export class ChatWindowComponent {
   async loadChat() {
     this.messages = await this.chatDb.getMessages(this.conversationId);
 
-    let lastUserMessageIndex = -1;
-    let lastBotMessageIndex = -1;
-
-    this.messages.forEach((message, index) => {
-      if (message.sender === 'user') {
-        if (lastUserMessageIndex !== -1) {
-          this.messages[lastUserMessageIndex].isLast = false;
-        }
-        lastUserMessageIndex = index;
-      } else if (message.sender === 'bot') {
-        if (lastBotMessageIndex !== -1) {
-          this.messages[lastBotMessageIndex].isLast = false;
-        }
-        lastBotMessageIndex = index;
-      }
-    });
-
-    if (lastUserMessageIndex !== -1) {
-      this.messages[lastUserMessageIndex].isLast = true;
+    this.resetIsLast()
+    if (this.messages.length > 0) {
+      this.messages[this.messages.length - 1].isLast = true;
+      this.messages[this.messages.length - 2].isLast = true;
     }
-    if (lastBotMessageIndex !== -1) {
-      this.messages[lastBotMessageIndex].isLast = true;
+  }
+
+  resetIsLast() {
+    // Reset all isLast flags
+    for (const message of this.messages) {
+      message.isLast = false;
     }
   }
 
@@ -76,10 +65,7 @@ export class ChatWindowComponent {
         this.sharedService.emitRefreshChatHistory();
       }
 
-      // Reset all isLast flags
-      for (const message of this.messages) {
-        message.isLast = false;
-      }
+      this.resetIsLast();
 
       // Prepare the input for getResponse
       const messageArray = this.prepareMessages(this.inputMessage);
