@@ -1,5 +1,6 @@
 <mat-list *ngFor="let message of messages">
-  <app-chat-message [message]="message" (addPrompt)="addPrompt($event)"></app-chat-message>
+  <app-chat-message [message]="message" (addPrompt)="addPrompt($event)"
+    (regenerateResponse)="regenerateResponse()"></app-chat-message>
 </mat-list>
 <div class="divider-box"></div>
 <div class="input-container">

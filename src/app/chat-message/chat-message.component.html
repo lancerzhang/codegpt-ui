@@ -1,11 +1,16 @@
 <mat-card class="message-card" [ngClass]="{'user': message.sender === 'user', 'bot': message.sender === 'bot'}">
   <mat-card-content class="message-content">
     <div class="message-icons">
-      <mat-icon class="message-icon" *ngIf="message.sender === 'user'">account_circle</mat-icon>
-      <mat-icon class="message-icon" *ngIf="message.sender === 'bot' && !message.isLoading">contact_support</mat-icon>
+      <button mat-icon-button>
+        <mat-icon class="message-icon" *ngIf="message.sender === 'user'">account_circle</mat-icon>
+        <mat-icon class="message-icon" *ngIf="message.sender === 'bot' && !message.isLoading">contact_support</mat-icon>
+      </button>
       <button mat-icon-button [disabled]="message.isPrompt" (click)="addPrompt.emit(message)"
         *ngIf="message.sender === 'user'">
         <mat-icon>add_circle_outline</mat-icon>
+      </button>
+      <button mat-icon-button (click)="regenerateResponse.emit()" *ngIf="message.sender === 'user' && message.isLast">
+        <mat-icon>refresh</mat-icon>
       </button>
       <mat-spinner *ngIf="message.isLoading" [diameter]="24"></mat-spinner>
     </div>
