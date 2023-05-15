@@ -19,7 +19,7 @@ Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app 
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `npm run build` to build the project if you want to run on server.
 
 ## Reference
 https://github.com/f/awesome-chatgpt-prompts
