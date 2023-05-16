@@ -23,3 +23,15 @@
 .divider-box {
     margin-bottom: 96px;
 }
+
+.empty-messages-container {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100% - 200px);
+}
+
+.empty-messages-box {
+    display: inline;
+}

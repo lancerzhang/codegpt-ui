@@ -13,7 +13,7 @@ import { SharedService } from '../services/shared.service';
 })
 export class NavColComponent implements OnInit {
   chatHistory: any[] = [];
-  username: string = 'User';
+  username: string = 'YourName';
   conversationId: number;
   selectedChat: any;
 
