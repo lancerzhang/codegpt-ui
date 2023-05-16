@@ -76,11 +76,6 @@ export class ChatApiService {
 
   logout() {
     // call your logout URL here
-    const url = environment.logoutUrl;
-    this.http.get(url).subscribe(() => {
-      console.log('Logged out after 25 minutes of inactivity');
-    }, (error) => {
-      console.error('Error during logout:', error);
-    });
+    window.location.href = environment.logoutUrl;
   }
 }
