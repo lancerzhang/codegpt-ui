@@ -16,9 +16,10 @@
 <div class="divider-box"></div>
 <div class="input-container">
   <mat-form-field appearance="fill" class="input-field">
-    <textarea matInput [matAutocomplete]="auto" [(ngModel)]="inputMessage" (ngModelChange)="onInputChange()"
-      cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="10"
-      placeholder="Send a message. / to search prompts"></textarea>
+    <textarea #textarea matInput [matAutocomplete]="auto" [(ngModel)]="inputMessage" (ngModelChange)="onInputChange()"
+      (keydown)="onKeyDown($event)" cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
+      cdkAutosizeMaxRows="10" placeholder="Send a message. / to search prompts"></textarea>
+
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
       <mat-option *ngFor="let option of promptOptions" [value]="option.prompt">
         {{ option.prompt }}

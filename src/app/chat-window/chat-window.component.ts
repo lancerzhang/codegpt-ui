@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -18,6 +18,7 @@ export class ChatWindowComponent {
   inputMessage: string = '';
   conversationId: number;
   promptOptions: { id: string; act: string; prompt: string }[] = [];
+  @ViewChild('textarea') textarea: ElementRef;
 
   constructor(
     private dialog: MatDialog,
@@ -153,4 +154,21 @@ export class ChatWindowComponent {
     this.messages.splice(-2);
     this.sendMessage();
   }
+
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      // If Shift is not pressed, call sendMessage() and prevent default behavior
+      if (!event.shiftKey && this.numberOfLines() === 1) {
+        event.preventDefault();
+        this.sendMessage();
+      }
+    }
+  }
+
+  numberOfLines(): number {
+    const lineHeight = parseInt(window.getComputedStyle(this.textarea.nativeElement).getPropertyValue('line-height'), 10);
+    const scrollHeight = this.textarea.nativeElement.scrollHeight;
+    return scrollHeight / lineHeight;
+  }
+
 }
