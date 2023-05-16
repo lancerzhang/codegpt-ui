@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MarkdownModule } from 'ngx-markdown';
+import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ChatMessageComponent } from './chat-message/chat-message.component';
@@ -58,7 +58,13 @@ import { PromptsComponent } from './prompts/prompts.component';
     MatAutocompleteModule,
     MatMenuModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: MarkedOptions,
+      useValue: {
+        breaks: true, // Enable Hard Line Breaks.
+      },
+    },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
