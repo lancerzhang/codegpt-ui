@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay, map, switchMap } from 'rxjs/operators';
+import { Observable, of, timer } from 'rxjs';
+import { delay, map, switchMap, take } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -9,9 +9,13 @@ import { environment } from '../../environments/environment';
 })
 export class ChatApiService {
 
+  private logoutTimer: any;
   private counter = 0;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+
+    this.scheduleLogout();
+  }
 
   getResponse(messages: any[]) {
     this.counter++;
@@ -23,12 +27,13 @@ export class ChatApiService {
     };
     console.log("requestBody", requestBody);
 
+    this.scheduleLogout();
+
     if (environment.useDummyData) {
       // read the dummy data from local file
       const jsonFile1 = 'assets/dummy/chat-response-1.json';
       const jsonFile2 = 'assets/dummy/chat-response-2.json';
       const jsonFile3 = 'assets/dummy/chat-response-3.json';
-
 
       return of(this.counter).pipe(
         delay(1000),
@@ -53,5 +58,29 @@ export class ChatApiService {
 
   private getJsonData(filePath: string): Observable<string> {
     return this.http.get(filePath).pipe(map((resp: any) => resp));
+  }
+
+  scheduleLogout() {
+    // clear any existing timer
+    if (this.logoutTimer) {
+      this.logoutTimer.unsubscribe();
+    }
+
+    // schedule new timer
+    this.logoutTimer = timer(25 * 60 * 1000)  // 25 minutes
+      .pipe(take(1))  // take once
+      .subscribe(() => {
+        this.logout();
+      });
+  }
+
+  logout() {
+    // call your logout URL here
+    const url = environment.logoutUrl;
+    this.http.get(url).subscribe(() => {
+      console.log('Logged out after 25 minutes of inactivity');
+    }, (error) => {
+      console.error('Error during logout:', error);
+    });
   }
 }
