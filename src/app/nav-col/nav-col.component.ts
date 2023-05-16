@@ -42,6 +42,10 @@ export class NavColComponent implements OnInit {
     this.router.navigate(['']);
   }
 
+  goto(path: string): void {
+    this.router.navigate([path]);
+  }
+
   selectChat(chat: any): void {
     this.router.navigate(['/chat', chat.id]);
   }

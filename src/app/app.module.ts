@@ -22,8 +22,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { PromptsComponent } from './prompts/prompts.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     NavColComponent,
     HomeComponent,
     ConfirmDialogComponent,
-    EditChatDialogComponent
+    EditChatDialogComponent,
+    PromptsComponent
   ],
   imports: [
     HttpClientModule,
@@ -53,6 +56,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MarkdownModule.forRoot(),
     MatDialogModule,
     MatAutocompleteModule,
+    MatMenuModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

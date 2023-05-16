@@ -45,7 +45,8 @@
 }
 
 .bottom-toolbar {
-    size: 12px;
+    display: flex;
+    justify-content: space-between;
     position: sticky;
     bottom: 0;
     width: 100%;

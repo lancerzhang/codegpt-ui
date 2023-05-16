@@ -20,6 +20,18 @@
     </mat-list-item>
 </mat-list>
 <mat-divider class="nav-divider"></mat-divider>
+
 <mat-toolbar color="primary" class="bottom-toolbar">
     {{ username }}
+    <span class="spacer"></span>
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+    </button>
 </mat-toolbar>
+
+<mat-menu #menu="matMenu" xPosition="before">
+    <button mat-menu-item (click)="goto('prompt')">
+        <mat-icon>edit note</mat-icon>
+        <span>User Prompts</span>
+    </button>
+</mat-menu>

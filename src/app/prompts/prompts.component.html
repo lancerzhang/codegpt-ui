@@ -1,0 +1,22 @@
+<div class="page-container">
+    <div class="prompt-container">
+        <!-- Download section -->
+        <div class="download-section">
+            <h2>Download User Prompts</h2>
+            <p>Click the button below to download all your prompts as a CSV file.</p>
+            <button mat-raised-button color="primary" (click)="downloadPromptsCSV()">
+                Download Prompts
+            </button>
+        </div>
+
+        <!-- Upload section -->
+        <div class="upload-section">
+            <h2>Upload User Prompts</h2>
+            <p>Select a CSV file to upload and overwrite your current prompts.</p>
+            <input type="file" #fileInput accept=".csv" />
+            <button mat-raised-button (click)="fileInput.files && uploadPromptsCSV(fileInput.files[0])">Upload</button>
+        </div>
+    </div>
+    <button class="back-buton" mat-raised-button (click)="goBack()">Back</button>
+
+</div>
