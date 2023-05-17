@@ -88,4 +88,13 @@ export class NavColComponent implements OnInit {
   async loadChats() {
     this.chatHistory = await this.chatDbService.getConversationsSortedByDate();
   }
+
+  clearConversations(): void {
+    this.chatDbService.clearConversations().then(() => {
+      console.log('All conversations cleared.');
+      window.location.href = '/';
+    }).catch((err) => {
+      console.error('Failed to clear conversations:', err);
+    });
+  }
 }

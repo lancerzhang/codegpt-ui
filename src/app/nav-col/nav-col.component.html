@@ -30,6 +30,10 @@
 </mat-toolbar>
 
 <mat-menu #menu="matMenu" xPosition="before">
+    <button mat-menu-item (click)="clearConversations()">
+        <mat-icon>delete_sweep</mat-icon>
+        <span>Clear conversations</span>
+    </button>
     <button mat-menu-item (click)="goto('prompt')">
         <mat-icon>edit note</mat-icon>
         <span>User Prompts</span>

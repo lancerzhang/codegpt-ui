@@ -58,4 +58,9 @@ export class ChatDbService extends Dexie {
     return await this.conversations.delete(chatId);
   }
 
+  clearConversations(): Promise<void> {
+    this.messages.clear();
+    return this.conversations.clear();
+  }
+
 }
