@@ -1,3 +1,4 @@
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -59,6 +60,7 @@ import { PromptsComponent } from './prompts/prompts.component';
     MatMenuModule,
   ],
   providers: [
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
     {
       provide: MarkedOptions,
       useValue: {
