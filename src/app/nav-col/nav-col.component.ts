@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { EditChatDialogComponent } from '../edit-chat-dialog/edit-chat-dialog.component';
 import { ChatDbService } from '../services/chat-db.service';
@@ -21,6 +23,7 @@ export class NavColComponent implements OnInit {
     private sharedService: SharedService,
     private router: Router,
     private route: ActivatedRoute,
+    private http: HttpClient,
     private chatDbService: ChatDbService) { }
 
   ngOnInit(): void {
@@ -36,6 +39,26 @@ export class NavColComponent implements OnInit {
     this.sharedService.getRefreshChatHistory().subscribe(() => {
       this.loadChats();
     });
+
+    // Check for username in localStorage
+    if (localStorage.getItem('username')) {
+      this.username = localStorage.getItem('username') || '';
+    } else if (environment.production) {
+      // Only fetch the username when in production mode
+      this.fetchUsername();
+    }
+  }
+
+  private fetchUsername(): void {
+    this.http.get('/api/v1/oauth2/me').subscribe(
+      (response: any) => {
+        this.username = response.displayName;
+        localStorage.setItem('username', this.username);
+      },
+      (error) => {
+        console.error('Failed to fetch username:', error);
+      }
+    );
   }
 
   newChat(): void {
