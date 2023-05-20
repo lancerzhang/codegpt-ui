@@ -62,7 +62,7 @@ export class NavColComponent implements OnInit {
   }
 
   newChat(): void {
-    this.router.navigate(['']);
+    window.location.href = '/';
   }
 
   goto(path: string): void {

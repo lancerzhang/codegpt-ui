@@ -158,17 +158,11 @@ export class ChatWindowComponent {
   onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
       // If Shift is not pressed, call sendMessage() and prevent default behavior
-      if (!event.shiftKey && this.numberOfLines() === 1) {
+      if (!event.shiftKey) {
         event.preventDefault();
         this.sendMessage();
       }
     }
-  }
-
-  numberOfLines(): number {
-    const lineHeight = parseInt(window.getComputedStyle(this.textarea.nativeElement).getPropertyValue('line-height'), 10);
-    const scrollHeight = this.textarea.nativeElement.scrollHeight;
-    return scrollHeight / lineHeight;
   }
 
 }
