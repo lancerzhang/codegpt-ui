@@ -15,4 +15,12 @@ export class SharedService {
   getRefreshChatHistory() {
     return this.refreshChatHistorySubject.asObservable();
   }
+
+  emitRefreshChatWindow() {
+    this.refreshChatWindowSubject.next();
+  }
+
+  getRefreshChatWindow() {
+    return this.refreshChatWindowSubject.asObservable();
+  }
 }

@@ -16,7 +16,7 @@ import { environment } from './../../environments/environment';
 export class ChatWindowComponent {
   messages: { id?: number, sender: string, text: string, numTokens: number, isPrompt: boolean, isLoading?: boolean, isLast?: boolean }[] = [];
   inputMessage: string = '';
-  conversationId: number;
+  conversationId: number = -1;
   promptOptions: { id: string; act: string; prompt: string }[] = [];
   @ViewChild('textarea') textarea: ElementRef;
 
@@ -31,13 +31,17 @@ export class ChatWindowComponent {
 
   async ngOnInit() {
     this.route.params.subscribe(params => {
-      this.conversationId = +params['conversationId'];
       // Reload data here
-      const conversationId = this.route.snapshot.paramMap.get('conversationId');
+      const conversationId = params['conversationId'];
       if (conversationId) {
         this.conversationId = Number(conversationId);
         this.loadChat();
       }
+    });
+    this.sharedService.getRefreshChatWindow().subscribe(() => {
+      this.messages = [];
+      this.inputMessage = '';
+      this.conversationId = -1;
     });
   }
 
@@ -60,7 +64,7 @@ export class ChatWindowComponent {
 
   async sendMessage() {
     if (this.inputMessage) {
-      if (!this.conversationId) {
+      if (this.conversationId === -1) {
         const title: string = this.inputMessage.slice(0, 30);
         this.conversationId = await this.chatDb.createConversation({ title });
         this.sharedService.emitRefreshChatHistory();

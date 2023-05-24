@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../environments/environment';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { EditChatDialogComponent } from '../edit-chat-dialog/edit-chat-dialog.component';
 import { ChatDbService } from '../services/chat-db.service';
 import { SharedService } from '../services/shared.service';
@@ -62,7 +61,8 @@ export class NavColComponent implements OnInit {
   }
 
   newChat(): void {
-    window.location.href = '/';
+    this.sharedService.emitRefreshChatWindow();
+    this.router.navigate(['']);
   }
 
   goto(path: string): void {
@@ -88,18 +88,10 @@ export class NavColComponent implements OnInit {
   }
 
   deleteChat(chatId: number) {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { actionName: "Delete", reourceName: "chat" }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.chatDbService.deleteChat(chatId).then(() => {
-          this.loadChats(); // reload chats after deleting
-          if (this.router.url === `/chat/${chatId}`) {
-            this.newChat();
-          }
-        });
+    this.chatDbService.deleteChat(chatId).then(() => {
+      this.loadChats(); // reload chats after deleting
+      if (this.router.url === `/chat/${chatId}`) {
+        this.newChat();
       }
     });
   }
