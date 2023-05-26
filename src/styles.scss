@@ -19,3 +19,13 @@ body {
     margin-top: 12px !important;
     margin-bottom: 12px !important;
 }
+
+table {
+    border-collapse: collapse;
+
+    th,
+    td {
+        border: 1px solid white;
+        padding: 8px;
+    }
+}
