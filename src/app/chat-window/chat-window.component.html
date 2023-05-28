@@ -3,27 +3,31 @@
     <h3>Product Features</h3>
     <ul>
       <li>Local chat history.</li>
-      <li>Prompt search.</li>
+      <li>Conversation context.</li>
+      <li>Tree-based chat history.</li>
+      <li>System and user prompt.</li>
+      <li>Import / export prompt.</li>
     </ul>
   </div>
 </div>
 <mat-list *ngFor="let message of messages">
-  <app-chat-message [message]="message" (addPrompt)="addPrompt($event)"
-    (regenerateResponse)="regenerateResponse()"></app-chat-message>
+  <app-chat-message [message]="message" (addPrompt)="addPrompt($event)" (switchMessage)="switchMessage($event)"
+    (branchMessage)="branchMessage($event, message.id!)">
+  </app-chat-message>
 </mat-list>
+
 <div class="divider-box"></div>
 <div class="input-container">
   <mat-form-field appearance="fill" class="input-field">
     <textarea #textarea matInput [matAutocomplete]="auto" [(ngModel)]="inputMessage" (ngModelChange)="onInputChange()"
       (keydown)="onKeyDown($event)" cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
       cdkAutosizeMaxRows="10" placeholder="Send a message. / to search prompts"></textarea>
-
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
       <mat-option *ngFor="let option of promptOptions" [value]="option.prompt">
         {{ option.prompt }}
       </mat-option>
     </mat-autocomplete>
-    <button mat-icon-button matSuffix (click)="sendMessage()" aria-label="Send">
+    <button mat-icon-button matSuffix (click)="sendNewMessage()" aria-label="Send">
       <mat-icon>send</mat-icon>
     </button>
   </mat-form-field>

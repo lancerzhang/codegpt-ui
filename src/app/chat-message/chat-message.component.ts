@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Message } from '../../models/message.model';
 
 @Component({
   selector: 'app-chat-message',
@@ -6,14 +7,43 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./chat-message.component.scss']
 })
 export class ChatMessageComponent {
-  @Input() message: { sender: string, text: string, isPrompt: boolean, isLoading?: boolean, isLast?: boolean };
+  @Input() message: Message;
   @Output() addPrompt = new EventEmitter<any>();
-  @Output() regenerateResponse = new EventEmitter<any>();
+  @Output() branchMessage = new EventEmitter<string>();
+  @Output() switchMessage = new EventEmitter<{ direction: 'prev' | 'next'; messageId: number }>();
 
+  isEditing: boolean = false;
+  editMessage: string;
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  startEditing() {
+    this.isEditing = true;
+    this.editMessage = this.message.text;
+  }
+
+  submitEdit() {
+    this.isEditing = false;
+    this.branchMessage.emit(this.editMessage);
+  }
+
+  cancelEdit() {
+    this.isEditing = false;
+  }
+
+  prevMessage() {
+    if (this.message.activePeerIndex! > 0) {
+      this.switchMessage.emit({ direction: 'prev', messageId: this.message.id! });
+    }
+  }
+
+  nextMessage() {
+    if (this.message.activePeerIndex! < this.message.peersIds!.length - 1) {
+      this.switchMessage.emit({ direction: 'next', messageId: this.message.id! });
+    }
   }
 
 }

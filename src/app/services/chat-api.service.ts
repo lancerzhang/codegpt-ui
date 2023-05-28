@@ -34,17 +34,23 @@ export class ChatApiService {
       const jsonFile1 = 'assets/dummy/chat-response-1.json';
       const jsonFile2 = 'assets/dummy/chat-response-2.json';
       const jsonFile3 = 'assets/dummy/chat-response-3.json';
+      const jsonFile4 = 'assets/dummy/chat-response-4.json';
+      const jsonFile5 = 'assets/dummy/chat-response-5.json';
 
       return of(this.counter).pipe(
         delay(1000),
         switchMap(counter => {
-          switch (counter % 3) {
+          switch (counter % 5) {
             case 1:
               return this.getJsonData(jsonFile1);
             case 2:
               return this.getJsonData(jsonFile2);
-            default:
+            case 3:
               return this.getJsonData(jsonFile3);
+            case 4:
+              return this.getJsonData(jsonFile4);
+            default:
+              return this.getJsonData(jsonFile5);
           }
         })
       );

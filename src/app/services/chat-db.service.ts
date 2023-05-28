@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
+import { Message } from '../../models/message.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class ChatDbService extends Dexie {
   constructor() {
     super('ChatDatabase');
     this.version(1).stores({
-      messages: '++id, conversationId, sender, text, isPrompt, createdAt',
+      messages: '++id, conversationId, sender, text, numTokens, isPrompt, parentId, isActive, createdAt, [conversationId+parentId]',
       conversations: '++id, title, lastUpdatedAt',
       prompts: '++id, act, prompt'
     });
@@ -21,7 +22,7 @@ export class ChatDbService extends Dexie {
     this.prompts = this.table('prompts');
   }
 
-  async createMessage(message: { id?: number, conversationId: number, sender: string, text: string, createdAt?: Date }) {
+  async createMessage(message: Message) {
     message['createdAt'] = new Date();
     return await this.messages.add(message);
   }
@@ -33,10 +34,6 @@ export class ChatDbService extends Dexie {
 
   async createPrompt(prompt: { act: string, prompt: string }) {
     return await this.prompts.add(prompt);
-  }
-
-  async getMessages(conversationId: number) {
-    return await this.messages.where('conversationId').equals(conversationId).toArray();
   }
 
   async getConversationsSortedByDate(): Promise<any[]> {
@@ -62,5 +59,44 @@ export class ChatDbService extends Dexie {
     this.messages.clear();
     return this.conversations.clear();
   }
+
+  async updateMessage(messageId: number, changes: Partial<Message>): Promise<number> {
+    return await this.messages.update(messageId, changes);
+  }
+
+  async getMessage(messageId: number): Promise<Message> {
+    return await this.messages.get(messageId);
+  }
+
+  async getParentId(childId: number): Promise<number> {
+    const message: Message = await this.messages.get(childId);
+    return message!.parentId!;
+  }
+
+  async loadMessagesWithChildren(conversationId: number, parentId: number = -1): Promise<Message[]> {
+    // Load the direct child messages of the parent message.
+    let directChildMessages = await this.messages.where({ conversationId: conversationId, parentId: parentId }).toArray();
+
+    // Filter for the active direct child message.
+    let activeDirectChildMessage = directChildMessages.find(msg => msg.isActive);
+
+    // If there is no active direct child message, stop the recursion.
+    if (!activeDirectChildMessage) {
+      return [];
+    }
+
+    // Recursively load the active child messages for the active direct child message.
+    let activeChildMessages = await this.loadMessagesWithChildren(conversationId, activeDirectChildMessage.id);
+
+    // Store the IDs of the peer messages in the active direct child message.
+    activeDirectChildMessage.peersIds = directChildMessages.map(msg => msg.id);
+
+    // Store the active peer index in the active direct child message.
+    activeDirectChildMessage.activePeerIndex = activeDirectChildMessage.peersIds.indexOf(activeDirectChildMessage.id);
+
+    // Concatenate the active direct child message with its active child messages.
+    return [activeDirectChildMessage, ...activeChildMessages];
+  }
+
 
 }

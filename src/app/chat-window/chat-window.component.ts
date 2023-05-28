@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { Message } from '../../models/message.model';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ChatApiService } from '../services/chat-api.service';
 import { ChatDbService } from '../services/chat-db.service';
@@ -14,7 +15,7 @@ import { environment } from './../../environments/environment';
   styleUrls: ['./chat-window.component.scss']
 })
 export class ChatWindowComponent {
-  messages: { id?: number, sender: string, text: string, numTokens: number, isPrompt: boolean, isLoading?: boolean, isLast?: boolean }[] = [];
+  messages: Message[] = [];
   inputMessage: string = '';
   conversationId: number = -1;
   promptOptions: { id: string; act: string; prompt: string }[] = [];
@@ -46,39 +47,31 @@ export class ChatWindowComponent {
   }
 
   async loadChat() {
-    this.messages = await this.chatDb.getMessages(this.conversationId);
-
-    this.resetIsLast()
-    if (this.messages.length > 0) {
-      this.messages[this.messages.length - 1].isLast = true;
-      this.messages[this.messages.length - 2].isLast = true;
-    }
+    this.messages = await this.loadMessagesWithChildren();
   }
 
-  resetIsLast() {
-    // Reset all isLast flags
-    for (const message of this.messages) {
-      message.isLast = false;
-    }
-  }
-
-  async sendMessage() {
-    if (this.inputMessage) {
+  async sendMessage(newText: string, parentId: number, childId?: number) {
+    if (newText) {
       if (this.conversationId === -1) {
-        const title: string = this.inputMessage.slice(0, 30);
+        const title: string = newText.slice(0, 30);
         this.conversationId = await this.chatDb.createConversation({ title });
         this.sharedService.emitRefreshChatHistory();
       }
 
-      this.resetIsLast();
+      // for branch message
+      if (childId) {
+        await this.chatDb.updateMessage(childId, { isActive: false });
+        this.truncateMessages(childId);
+      }
 
       // Prepare the input for getResponse
-      const messageArray = this.prepareMessages(this.inputMessage);
+      const messageArray = this.prepareMessages(newText);
 
       // update messages of pages
-      const userMessageId: number = await this.chatDb.createMessage({ conversationId: this.conversationId, sender: 'user', text: this.inputMessage });
-      const userMessage = { id: userMessageId, sender: 'user', text: this.inputMessage, numTokens: 0, isPrompt: false, isLast: true };
-      const botMessage = { id: -1, sender: 'bot', text: '', numTokens: 0, isPrompt: false, isLast: true, isLoading: true };
+      let userMessage: Message = { conversationId: this.conversationId, sender: 'user', text: newText, isPrompt: false, parentId: parentId, isActive: true };
+      const userMessageId: number = await this.chatDb.createMessage(userMessage);
+      userMessage.id = userMessageId;
+      const botMessage: Message = { conversationId: this.conversationId, sender: 'bot', text: '', isPrompt: false, parentId: userMessageId, isActive: true, isLoading: true };
 
       this.messages.push(userMessage);
       this.messages.push(botMessage);
@@ -86,19 +79,47 @@ export class ChatWindowComponent {
       // Send the array of messages to getResponse
       this.chatApiService.getResponse(messageArray).subscribe(async (response: any) => {
         const respContent = response.data.choices[0].message.content;
-
         userMessage.numTokens = response.data.usage.prompt_tokens;
-
-        const botMessageId: number = await this.chatDb.createMessage({ conversationId: this.conversationId, sender: 'bot', text: respContent });
+        botMessage.text = respContent;
+        const botMessageId: number = await this.chatDb.createMessage(botMessage);
         botMessage.id = botMessageId
         botMessage.numTokens = response.data.usage.completion_tokens;
-        botMessage.text = respContent;
         botMessage.isLoading = false;
+        await this.chatDb.updateMessage(botMessageId, { isLoading: false });
+        // to update peersIds and activePeerIndex
+        if (childId) {
+          await this.replaceMessageWithChildren(userMessageId, userMessageId);
+        }
       });
-
-      this.inputMessage = '';
-      this.promptOptions = [];
     }
+  }
+
+  truncateMessages(messageId: number) {
+    // Find the index of the messageId in the messages array.
+    const messageIdIndex = this.messages.findIndex(message => message.id === messageId);
+    // Slice the messages array from the beginning to messageIdIndex.
+    this.messages = this.messages.slice(0, messageIdIndex);
+  }
+
+  findParentId(): number {
+    const parentMessage: Message = this.messages.slice(-1)[0];
+    let parentId: number = -1;
+    if (parentMessage) {
+      parentId = parentMessage.id!;
+    }
+    return parentId;
+  }
+
+  async sendNewMessage() {
+    const parentId = this.findParentId();
+    this.sendMessage(this.inputMessage, parentId);
+    this.inputMessage = '';
+    this.promptOptions = [];
+  }
+
+  async branchMessage(newText: string, childId: number) {
+    const parentId: number = await this.chatDb.getParentId(childId);
+    await this.sendMessage(newText, parentId, childId);
   }
 
   prepareMessages(newMessage: string): any[] {
@@ -139,7 +160,6 @@ export class ChatWindowComponent {
   }
 
   addPrompt(message: any) {
-
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: { actionName: "Add", reourceName: "prompt" }
     });
@@ -153,20 +173,45 @@ export class ChatWindowComponent {
     });
   }
 
-  regenerateResponse() {
-    this.inputMessage = this.messages[this.messages.length - 2].text;
-    this.messages.splice(-2);
-    this.sendMessage();
-  }
-
   onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
       // If Shift is not pressed, call sendMessage() and prevent default behavior
       if (!event.shiftKey) {
         event.preventDefault();
-        this.sendMessage();
+        this.sendNewMessage();
       }
     }
+  }
+
+  async switchMessage({ direction, messageId }: { direction: 'prev' | 'next'; messageId: number }) {
+    // Find the index of the messageId in the messages array.
+    const messageIdIndex = this.messages.findIndex(message => message.id === messageId);
+
+    // Get the message at messageIdIndex.
+    const message = this.messages[messageIdIndex];
+
+    // Calculate the new active peer index.
+    let newActivePeerIndex = direction === 'prev' ? message.activePeerIndex! - 1 : message.activePeerIndex! + 1;
+
+    // Get the new message ID.
+    let newMessageId = message.peersIds![newActivePeerIndex];
+    await this.chatDb.updateMessage(messageId, { isActive: false });
+    await this.replaceMessageWithChildren(messageId, newMessageId);
+  }
+
+  async replaceMessageWithChildren(messageId: number, newMessageId: number) {
+    this.truncateMessages(messageId);
+    // Update the isActive
+    await this.chatDb.updateMessage(newMessageId, { isActive: true });
+
+    // Reload messages starting from newMessageId and concatenate with the existing messages.
+    let newMessages = await this.loadMessagesWithChildren();
+    this.messages = [...this.messages, ...newMessages];
+  }
+
+  async loadMessagesWithChildren() {
+    const parentId = this.findParentId();
+    return await this.chatDb.loadMessagesWithChildren(this.conversationId, parentId);
   }
 
 }
