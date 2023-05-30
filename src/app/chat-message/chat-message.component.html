@@ -27,7 +27,7 @@
     </div>
     <div *ngIf="isEditing" class="flex-col input-box">
       <mat-form-field appearance="fill" class="input-field">
-        <textarea #textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+        <textarea #textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" class="text-area"
           [(ngModel)]="editMessage"></textarea>
       </mat-form-field>
       <div>

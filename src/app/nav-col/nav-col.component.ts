@@ -70,6 +70,7 @@ export class NavColComponent implements OnInit {
   }
 
   selectChat(chat: any): void {
+    this.selectedChat = chat;
     this.router.navigate(['/chat', chat.id]);
   }
 

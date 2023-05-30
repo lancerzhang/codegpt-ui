@@ -9,7 +9,6 @@
 .input-field {
     color: white;
     width: 90%;
-    background-color: #3c3d4a;
 }
 
 .input-field mat-label {
@@ -34,4 +33,8 @@
 
 .empty-messages-box {
     display: inline;
+}
+
+.text-area {
+    caret-color: white;
 }

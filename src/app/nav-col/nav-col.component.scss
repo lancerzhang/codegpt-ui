@@ -1,7 +1,7 @@
 .top-toolbar {
     display: flex;
     justify-content: center;
-    background-color: #1d1e20;
+    background-color: rgb(32, 33, 35);
 }
 
 .new-chat-button {
@@ -20,7 +20,7 @@
     overflow-y: auto;
 }
 
-.chat-item {
+.chat-row {
     display: flex;
     justify-content: space-between;
 }
@@ -50,5 +50,9 @@
     position: sticky;
     bottom: 0;
     width: 100%;
-    background-color: #1d1e20;
+    background-color: rgb(32, 33, 35);
+}
+
+.chat-history .selected {
+    background-color: rgb(64, 65, 79);
 }

@@ -7,7 +7,7 @@
 <mat-list class="chat-history">
     <mat-list-item *ngFor="let chat of chatHistory" (click)="selectChat(chat)"
         [class.selected]="selectedChat?.id === chat.id">
-        <div class="chat-item">
+        <div class="chat-row">
             <div class="chat-title">
                 <mat-icon class="left-icon">chat</mat-icon>
                 <div>{{ chat.title }}</div>
@@ -20,7 +20,6 @@
     </mat-list-item>
 </mat-list>
 <mat-divider class="nav-divider"></mat-divider>
-
 <mat-toolbar color="primary" class="bottom-toolbar">
     {{ username }}
     <span class="spacer"></span>
@@ -28,7 +27,6 @@
         <mat-icon>more_vert</mat-icon>
     </button>
 </mat-toolbar>
-
 <mat-menu #menu="matMenu" xPosition="before">
     <button mat-menu-item (click)="clearConversations()">
         <mat-icon>delete_sweep</mat-icon>
