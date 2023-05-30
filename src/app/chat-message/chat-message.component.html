@@ -1,7 +1,7 @@
 <mat-card class="message-card" [ngClass]="{'user': message.sender === 'user', 'bot': message.sender === 'bot'}">
   <mat-card-content class="flex-row">
     <div class="flex-row">
-      <div class="flex-col vertical-margin">
+      <div class="flex-col vertical-space pagination">
         <mat-icon (click)="startEditing()" *ngIf="message.sender === 'user' && !isEditing">edit</mat-icon>
         <!-- Left arrow for switching to previous child message -->
         <div *ngIf="!isEditing && message.peersIds && message.peersIds.length > 1" class="flex-row">
@@ -15,9 +15,9 @@
         </div>
         <mat-spinner *ngIf="message.isLoading" [diameter]="24"></mat-spinner>
       </div>
-      <div class="flex-col vertical-margin">
-        <mat-icon class="message-icon" *ngIf="message.sender === 'user'">account_circle</mat-icon>
-        <mat-icon class="message-icon" *ngIf="message.sender === 'bot' && !message.isLoading">contact_support</mat-icon>
+      <div class="flex-col vertical-space">
+        <mat-icon class="right-space" *ngIf="message.sender === 'user'">account_circle</mat-icon>
+        <mat-icon class="right-space" *ngIf="message.sender === 'bot' && !message.isLoading">contact_support</mat-icon>
         <mat-icon (click)="addPrompt.emit(message)"
           *ngIf="message.sender === 'user' && !message.isPrompt">add_circle_outline</mat-icon>
       </div>
@@ -25,11 +25,14 @@
     <div *ngIf="!isEditing">
       <markdown lineHighlight lineNumbers clipboard [data]="message.text"></markdown>
     </div>
-    <div *ngIf="isEditing" class="flex-col">
-      <textarea [(ngModel)]="editMessage"></textarea>
+    <div *ngIf="isEditing" class="flex-col input-box">
+      <mat-form-field appearance="fill" class="input-field">
+        <textarea #textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+          [(ngModel)]="editMessage"></textarea>
+      </mat-form-field>
       <div>
-        <button (click)="submitEdit()">Submit</button>
-        <button (click)="cancelEdit()">Cancel</button>
+        <button mat-raised-button color="primary" (click)="submitEdit()" class="right-space">Submit</button>
+        <button mat-raised-button (click)="cancelEdit()">Cancel</button>
       </div>
     </div>
   </mat-card-content>
