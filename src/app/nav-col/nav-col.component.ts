@@ -71,6 +71,7 @@ export class NavColComponent implements OnInit {
 
   selectChat(chat: any): void {
     this.selectedChat = chat;
+    this.sharedService.emitRefreshChatWindow();
     this.router.navigate(['/chat', chat.id]);
   }
 
