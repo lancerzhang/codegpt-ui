@@ -23,6 +23,7 @@ export class ChatMessageComponent {
   ngOnInit(): void {
     const escapedXmlString = this.message.text
       .replace(/&/g, '&amp;')
+      .replace(/ /g, '&nbsp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
     this.htmlContent = this.sanitizer.bypassSecurityTrustHtml(escapedXmlString.replace(/\n/g, '<br/>'));
