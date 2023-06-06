@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Message } from '../../models/message.model';
 
 @Component({
@@ -14,10 +15,17 @@ export class ChatMessageComponent {
 
   isEditing: boolean = false;
   editMessage: string;
+  htmlContent: SafeHtml;
 
-  constructor() { }
+  constructor(private sanitizer: DomSanitizer) {
+  }
 
   ngOnInit(): void {
+    const escapedXmlString = this.message.text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    this.htmlContent = this.sanitizer.bypassSecurityTrustHtml(escapedXmlString.replace(/\n/g, '<br/>'));
   }
 
   startEditing() {

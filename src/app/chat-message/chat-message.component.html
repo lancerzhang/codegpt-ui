@@ -22,7 +22,9 @@
           *ngIf="message.sender === 'user' && !message.isPrompt">add_circle_outline</mat-icon>
       </div>
     </div>
-    <div *ngIf="!isEditing">
+    <div *ngIf="!isEditing && message.sender === 'user'" [innerHTML]="htmlContent">
+    </div>
+    <div *ngIf="!isEditing && message.sender === 'bot'">
       <markdown lineHighlight lineNumbers clipboard [data]="message.text"></markdown>
     </div>
     <div *ngIf="isEditing" class="flex-col input-box">
