@@ -128,7 +128,8 @@ export class ChatWindowComponent {
   }
 
   prepareMessages(newMessage: string): any[] {
-    const maxContextTokens = this.openaiConfig.selectedModel.session.tokens;
+    const maxChats = this.openaiConfig.selectedModel.session.chats;
+    const maxTokens = this.openaiConfig.selectedModel.session.tokens;
     let currentTokens = 0;
     const messageArray = [];
 
@@ -139,7 +140,7 @@ export class ChatWindowComponent {
       const tokens = message.numTokens || 0;
 
       // If adding the next message exceeds the maxContextTokens, break the loop
-      if (currentTokens + tokens > maxContextTokens) {
+      if (currentTokens + tokens > maxTokens || messageArray.length >= maxChats) {
         break;
       }
 
