@@ -1,31 +1,30 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, timer } from 'rxjs';
-import { delay, map, switchMap, take } from 'rxjs/operators';
+import { Observable, Subscription, of, timer } from 'rxjs';
+import { delay, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatApiService {
-
-  private logoutTimer: any;
   private counter = 0;
 
-  constructor(private http: HttpClient) {
+  private keepAliveTimer: Subscription | undefined;
 
-    this.scheduleLogout();
+  constructor(private http: HttpClient) {
+    this.scheduleKeepAlive();
   }
 
   getResponse(messages: any[]) {
+
+    this.scheduleKeepAlive();
     this.counter++;
 
     const requestBody = {
       messages: messages
     };
     console.log("requestBody", requestBody);
-
-    this.scheduleLogout();
 
     if (environment.production) {
       // make an HTTP request
@@ -58,23 +57,38 @@ export class ChatApiService {
         })
       );
     }
+
   }
 
   private getJsonData(filePath: string): Observable<string> {
     return this.http.get(filePath).pipe(map((resp: any) => resp));
   }
 
-  scheduleLogout() {
+  scheduleKeepAlive() {
     // clear any existing timer
-    if (this.logoutTimer) {
-      this.logoutTimer.unsubscribe();
+    if (this.keepAliveTimer) {
+      this.keepAliveTimer.unsubscribe();
     }
 
     // schedule new timer
-    this.logoutTimer = timer(25 * 60 * 1000)  // 25 minutes
-      .pipe(take(1))  // take once
+    this.keepAliveTimer = timer(25 * 60 * 1000)  // 25 minutes
       .subscribe(() => {
-        // make keep alive call
+        this.keepAlive(); // make keep alive call
+      });
+  }
+
+  private keepAlive() {
+    this.http.get(`${environment.apiBase}/.well-known/health`).subscribe(() => {
+      console.log('Keep-alive request sent');
+    },
+      (error) => {
+        console.error("Error sending keep-alive request:", error);
+        // Error occurred, reschedule the keep-alive
+        this.scheduleKeepAlive();
+      },
+      () => {
+        // On complete, reschedule the keep-alive
+        this.scheduleKeepAlive();
       });
   }
 }
