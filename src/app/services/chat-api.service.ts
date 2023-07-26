@@ -21,15 +21,18 @@ export class ChatApiService {
     this.counter++;
 
     const requestBody = {
-      apiVersion: environment.apiVersion,
-      model: environment.model,
       messages: messages
     };
     console.log("requestBody", requestBody);
 
     this.scheduleLogout();
 
-    if (environment.useDummyData) {
+    if (environment.production) {
+      // make an HTTP request
+      const url = `${environment.apiBase}/chat/completions`;
+
+      return this.http.post(url, requestBody);
+    } else {
       // read the dummy data from local file
       const jsonFile1 = 'assets/dummy/chat-response-1.json';
       const jsonFile2 = 'assets/dummy/chat-response-2.json';
@@ -54,11 +57,6 @@ export class ChatApiService {
           }
         })
       );
-    } else {
-      // make an HTTP request
-      const url = environment.apiUrl;
-
-      return this.http.post(url, requestBody);
     }
   }
 
@@ -76,12 +74,7 @@ export class ChatApiService {
     this.logoutTimer = timer(25 * 60 * 1000)  // 25 minutes
       .pipe(take(1))  // take once
       .subscribe(() => {
-        this.logout();
+        // make keep alive call
       });
-  }
-
-  logout() {
-    // call your logout URL here
-    window.location.href = environment.logoutUrl;
   }
 }

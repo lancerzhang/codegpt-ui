@@ -5,9 +5,9 @@ import { Message } from '../../models/message.model';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ChatApiService } from '../services/chat-api.service';
 import { ChatDbService } from '../services/chat-db.service';
+import { OpenaiConfigService } from '../services/openai-config.service';
 import { PromptService } from '../services/prompt.service';
 import { SharedService } from '../services/shared.service';
-import { environment } from './../../environments/environment';
 
 @Component({
   selector: 'app-chat-window',
@@ -15,6 +15,7 @@ import { environment } from './../../environments/environment';
   styleUrls: ['./chat-window.component.scss']
 })
 export class ChatWindowComponent {
+  openaiConfig: any;
   messages: Message[] = [];
   inputMessage: string = '';
   conversationId: number = -1;
@@ -27,10 +28,14 @@ export class ChatWindowComponent {
     private sharedService: SharedService,
     private route: ActivatedRoute,
     private chatApiService: ChatApiService,
-    private chatDb: ChatDbService
+    private chatDb: ChatDbService,
+    private openaiConfigService: OpenaiConfigService
   ) { }
 
   async ngOnInit() {
+    this.openaiConfigService.getOpenAIConfig().subscribe(data => {
+      this.openaiConfig = data;
+    });
     this.route.params.subscribe(params => {
       // Reload data here
       const conversationId = params['conversationId'];
@@ -123,7 +128,7 @@ export class ChatWindowComponent {
   }
 
   prepareMessages(newMessage: string): any[] {
-    const maxContextTokens = environment.maxContextTokens;
+    const maxContextTokens = this.openaiConfig.selectedModel.session.tokens;
     let currentTokens = 0;
     const messageArray = [];
 

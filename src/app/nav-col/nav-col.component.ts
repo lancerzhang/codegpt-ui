@@ -49,7 +49,7 @@ export class NavColComponent implements OnInit {
   }
 
   private fetchUsername(): void {
-    this.http.get('/api/v1/oauth2/me').subscribe(
+    this.http.get(`${environment.apiBase}/oauth2/me`).subscribe(
       (response: any) => {
         this.username = response.displayName;
         localStorage.setItem('username', this.username);
