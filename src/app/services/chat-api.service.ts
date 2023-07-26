@@ -74,7 +74,12 @@ export class ChatApiService {
     this.logoutTimer = timer(25 * 60 * 1000)  // 25 minutes
       .pipe(take(1))  // take once
       .subscribe(() => {
-        // make keep alive call
+        this.logout();
       });
+  }
+
+  logout() {
+    // call your logout URL here
+    window.location.href = `${environment.apiBase}/logout`;
   }
 }
