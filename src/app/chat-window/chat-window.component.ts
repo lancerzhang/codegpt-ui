@@ -48,6 +48,8 @@ export class ChatWindowComponent {
       this.messages = [];
       this.inputMessage = '';
       this.conversationId = -1;
+
+      this.openaiConfigService.setSelectedModel(this.openaiConfig.models[0]);
     });
   }
 

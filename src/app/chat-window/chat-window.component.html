@@ -1,5 +1,5 @@
 <div *ngIf="messages.length === 0" class="empty-messages-container">
-  <div *ngIf="openaiConfig">
+  <div *ngIf="openaiConfig" class="divider-box">
     <mat-tab-group *ngIf="openaiConfig.models.length > 1"
       (selectedIndexChange)="selectModel(openaiConfig.models[$event])">
       <mat-tab *ngFor="let model of openaiConfig.models" label="{{ model.model }}">

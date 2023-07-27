@@ -25,6 +25,8 @@ export class ChatApiService {
   }
 
   getResponse(messages: any[]) {
+    // get the selectedModel from the openaiConfigService
+    const selectedModel = this.openaiConfig.selectedModel;
     this.counter++;
 
     const requestBody = {
@@ -37,8 +39,6 @@ export class ChatApiService {
     if (environment.production) {
       // make an HTTP request
       const url = `${environment.apiBase}/chat/completions`;
-      // get the selectedModel from the openaiConfigService
-      const selectedModel = this.openaiConfig.selectedModel;
 
       // define headers
       let headers = new HttpHeaders();
