@@ -12,6 +12,10 @@ export class OpenaiConfigService {
 
   constructor(private http: HttpClient) { }
 
+  setSelectedModel(model: any) {
+    this.openai.selectedModel = model;
+  }
+
   getOpenAIConfig(): Observable<any> {
     if (this.openai) {
       return of(this.openai);

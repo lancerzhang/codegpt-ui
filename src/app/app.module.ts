@@ -13,6 +13,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { EditChatDialogComponent } from './edit-chat-dialog/edit-chat-dialog.component';
 import { HomeComponent } from './home/home.component';
 import { NavColComponent } from './nav-col/nav-col.component';
+import { PromptsComponent } from './prompts/prompts.component';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,8 +26,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { PromptsComponent } from './prompts/prompts.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { PromptsComponent } from './prompts/prompts.component';
     MatDialogModule,
     MatAutocompleteModule,
     MatMenuModule,
+    MatTabsModule,
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

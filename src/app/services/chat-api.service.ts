@@ -1,18 +1,25 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, timer } from 'rxjs';
 import { delay, map, switchMap, take } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { OpenaiConfigService } from '../services/openai-config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatApiService {
+  openaiConfig: any;
 
   private logoutTimer: any;
   private counter = 0;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+    private openaiConfigService: OpenaiConfigService) {
+
+    this.openaiConfigService.getOpenAIConfig().subscribe(data => {
+      this.openaiConfig = data;
+    });
 
     this.scheduleLogout();
   }
@@ -30,8 +37,23 @@ export class ChatApiService {
     if (environment.production) {
       // make an HTTP request
       const url = `${environment.apiBase}/chat/completions`;
+      // get the selectedModel from the openaiConfigService
+      const selectedModel = this.openaiConfig.selectedModel;
 
-      return this.http.post(url, requestBody);
+      // define headers
+      let headers = new HttpHeaders();
+      headers = headers.set('Model', selectedModel.model);
+
+      // only set 'Deployment' header if deployment value exists
+      if (selectedModel.deployment) {
+        headers = headers.set('Deployment', selectedModel.deployment);
+      }
+      if (selectedModel.maxTokens && selectedModel.maxTokens.completion) {
+        headers = headers.set('Max-completion-tokens', selectedModel.maxTokens.completion.toString());
+      }
+
+      return this.http.post(url, requestBody, { headers });
+
     } else {
       // read the dummy data from local file
       const jsonFile1 = 'assets/dummy/chat-response-1.json';

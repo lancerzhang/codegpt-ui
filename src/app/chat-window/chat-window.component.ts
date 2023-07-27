@@ -220,4 +220,7 @@ export class ChatWindowComponent {
     return await this.chatDb.loadMessagesWithChildren(this.conversationId, parentId);
   }
 
+  selectModel(model: any) {
+    this.openaiConfigService.setSelectedModel(model);
+  }
 }
