@@ -9,7 +9,6 @@ import { OpenaiConfigService } from '../services/openai-config.service';
 import { PromptService } from '../services/prompt.service';
 import { SharedService } from '../services/shared.service';
 
-
 @Component({
   selector: 'app-chat-window',
   templateUrl: './chat-window.component.html',
@@ -42,6 +41,15 @@ export class ChatWindowComponent {
       const conversationId = params['conversationId'];
       if (conversationId) {
         this.conversationId = Number(conversationId);
+        this.chatDb.getConversation(conversationId).then(conversation => {
+          this.openaiConfig.models.forEach((model: any) => {
+            if (conversation.model) {
+              if (model.model == conversation.model) {
+                this.openaiConfigService.setSelectedModel(model);
+              }
+            }
+          });
+        });
         this.loadChat();
       }
     });
@@ -62,7 +70,8 @@ export class ChatWindowComponent {
     if (newText) {
       if (this.conversationId === -1) {
         const title: string = newText.slice(0, 30);
-        this.conversationId = await this.chatDb.createConversation({ title });
+        const model: string = this.openaiConfig.selectedModel.model;
+        this.conversationId = await this.chatDb.createConversation({ title, model });
         this.sharedService.emitRefreshChatHistory();
       }
 

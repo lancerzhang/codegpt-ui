@@ -14,7 +14,7 @@ export class ChatDbService extends Dexie {
     super('ChatDatabase');
     this.version(1).stores({
       messages: '++id, conversationId, sender, text, numTokens, isPrompt, parentId, isActive, createdAt, [conversationId+parentId]',
-      conversations: '++id, title, lastUpdatedAt',
+      conversations: '++id, title, model, lastUpdatedAt',
       prompts: '++id, act, prompt'
     });
     this.messages = this.table('messages');
@@ -27,7 +27,7 @@ export class ChatDbService extends Dexie {
     return await this.messages.add(message);
   }
 
-  async createConversation(conversation: { title: string, lastUpdatedAt?: Date }) {
+  async createConversation(conversation: { title: string, model: string, lastUpdatedAt?: Date }) {
     conversation['lastUpdatedAt'] = new Date();
     return await this.conversations.add(conversation);
   }
@@ -67,6 +67,12 @@ export class ChatDbService extends Dexie {
   async getMessage(messageId: number): Promise<Message> {
     return await this.messages.get(messageId);
   }
+
+  async getConversation(conversationId: string | number): Promise<any> {
+    // Ensure conversationId is treated as a number
+    return await this.conversations.get(Number(conversationId));
+  }
+
 
   async getParentId(childId: number): Promise<number> {
     const message: Message = await this.messages.get(childId);

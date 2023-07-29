@@ -17,6 +17,9 @@
     </ul>
   </div>
 </div>
+<div class="model-info" *ngIf="messages.length > 0">
+  Model: {{openaiConfig.selectedModel.model}}
+</div>
 <mat-list *ngFor="let message of messages">
   <app-chat-message [message]="message" (addPrompt)="addPrompt($event)" (switchMessage)="switchMessage($event)"
     (branchMessage)="branchMessage($event, message.id!)">
