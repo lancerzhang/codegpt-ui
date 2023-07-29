@@ -1,4 +1,5 @@
 export const environment = {
     production: true,
-    apiBase: ''
+    apiChatBase: '',
+    apiOthersBase: 'api/v1',
 };

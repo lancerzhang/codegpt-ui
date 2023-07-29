@@ -38,7 +38,7 @@ export class ChatApiService {
 
     if (environment.production) {
       // make an HTTP request
-      const url = `${environment.apiBase}/chat/completions`;
+      const url = `${environment.apiChatBase}/chat/completions`;
 
       // define headers
       let headers = new HttpHeaders();
@@ -102,6 +102,6 @@ export class ChatApiService {
 
   logout() {
     // call your logout URL here
-    window.location.href = `${environment.apiBase}/logout`;
+    window.location.href = `/logout`;
   }
 }

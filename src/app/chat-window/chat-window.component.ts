@@ -9,6 +9,7 @@ import { OpenaiConfigService } from '../services/openai-config.service';
 import { PromptService } from '../services/prompt.service';
 import { SharedService } from '../services/shared.service';
 
+
 @Component({
   selector: 'app-chat-window',
   templateUrl: './chat-window.component.html',
@@ -87,17 +88,30 @@ export class ChatWindowComponent {
       this.chatApiService.getResponse(messageArray).subscribe(async (response: any) => {
         const respContent = response.data.choices[0].message.content;
         userMessage.numTokens = response.data.usage.prompt_tokens;
-        botMessage.text = respContent;
-        const botMessageId: number = await this.chatDb.createMessage(botMessage);
-        botMessage.id = botMessageId
-        botMessage.numTokens = response.data.usage.completion_tokens;
-        botMessage.isLoading = false;
-        await this.chatDb.updateMessage(botMessageId, { isLoading: false });
-        // to update peersIds and activePeerIndex
-        if (childId) {
-          await this.replaceMessageWithChildren(userMessageId, userMessageId);
+        await this.createBotMessage(respContent, response.data.usage.completion_tokens, botMessage, userMessageId, childId);
+      }, async error => {
+        let message;
+        if (error.status === 429) {
+          const selectedModel = this.openaiConfig.selectedModel;
+          message = `You have exceeded the chat limit of model ${selectedModel.model}, ${selectedModel.rateLimit.requests} requests in ${selectedModel.rateLimit.minutes} minutes`;
+        } else {
+          message = 'System error, please retry.';
         }
+        await this.createBotMessage(message, 0, botMessage, userMessageId, childId);
       });
+    }
+  }
+
+  async createBotMessage(text: string, numTokens: number, botMessage: any, userMessageId: number, childId?: number) {
+    botMessage.text = text;
+    const botMessageId: number = await this.chatDb.createMessage(botMessage);
+    botMessage.id = botMessageId
+    botMessage.numTokens = numTokens;
+    botMessage.isLoading = false;
+    await this.chatDb.updateMessage(botMessageId, { isLoading: false });
+    // to update peersIds and activePeerIndex
+    if (childId) {
+      await this.replaceMessageWithChildren(userMessageId, userMessageId);
     }
   }
 

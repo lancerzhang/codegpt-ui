@@ -23,7 +23,7 @@ export class OpenaiConfigService {
 
   private fetchOpenAIConfig(): Observable<any> {
     return this.http
-      .get(`${environment.apiBase}/config`)
+      .get(`${environment.apiOthersBase}/config`)
       .pipe(
         map((data: any) => {
           data.selectedModel = data.models[0]; // Select the first model by default

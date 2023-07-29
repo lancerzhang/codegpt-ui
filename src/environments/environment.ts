@@ -1,4 +1,5 @@
 export const environment = {
     production: false,
-    apiBase: ''
+    apiChatBase: '',
+    apiOthersBase: '',
 };
