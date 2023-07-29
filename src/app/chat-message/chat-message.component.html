@@ -24,7 +24,7 @@
     </div>
     <div *ngIf="!isEditing && message.sender === 'user'" [innerHTML]="htmlContent">
     </div>
-    <div *ngIf="!isEditing && message.sender === 'bot'">
+    <div *ngIf="!isEditing && message.sender === 'bot'" class="markdown-container">
       <markdown lineHighlight lineNumbers clipboard [data]="message.text"></markdown>
     </div>
     <div *ngIf="isEditing" class="flex-col input-box">
