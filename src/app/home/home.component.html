@@ -1,8 +1,12 @@
-<div class="app-container">
-    <div class="nav-col">
-        <app-nav-col></app-nav-col>
-    </div>
-    <div class="chat-window">
-        <app-chat-window></app-chat-window>
-    </div>
-</div>
+<as-split class="app-container" (dragEnd)="saveSizes($event)">
+    <as-split-area [size]="navSize">
+        <div class="nav-col">
+            <app-nav-col></app-nav-col>
+        </div>
+    </as-split-area>
+    <as-split-area [size]="chatSize">
+        <div class="chat-window">
+            <app-chat-window></app-chat-window>
+        </div>
+    </as-split-area>
+</as-split>

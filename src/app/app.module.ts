@@ -28,6 +28,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { AngularSplitModule } from 'angular-split';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatAutocompleteModule,
     MatMenuModule,
     MatTabsModule,
+    AngularSplitModule,
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
