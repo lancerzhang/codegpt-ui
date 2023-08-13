@@ -36,25 +36,7 @@ export class ChatApiService {
 
     this.scheduleLogout();
 
-    if (environment.production) {
-      // make an HTTP request
-      const url = `${environment.apiChatBase}/chat/completions`;
-
-      // define headers
-      let headers = new HttpHeaders();
-      headers = headers.set('Model', selectedModel.model);
-
-      // only set 'Deployment' header if deployment value exists
-      if (selectedModel.deployment) {
-        headers = headers.set('Deployment', selectedModel.deployment);
-      }
-      if (selectedModel.maxTokens && selectedModel.maxTokens.completion) {
-        headers = headers.set('Max-completion-tokens', selectedModel.maxTokens.completion.toString());
-      }
-
-      return this.http.post(url, requestBody, { headers });
-
-    } else {
+    if (environment.useDummy) {
       // read the dummy data from local file
       const jsonFile1 = 'assets/dummy/chat-response-1.json';
       const jsonFile2 = 'assets/dummy/chat-response-2.json';
@@ -79,6 +61,23 @@ export class ChatApiService {
           }
         })
       );
+    } else {
+      // make an HTTP request
+      const url = `${environment.apiChatBase}/chat/completions`;
+
+      // define headers
+      let headers = new HttpHeaders();
+      headers = headers.set('Model', selectedModel.model);
+
+      // only set 'Deployment' header if deployment value exists
+      if (selectedModel.deployment) {
+        headers = headers.set('Deployment', selectedModel.deployment);
+      }
+      if (selectedModel.maxTokens && selectedModel.maxTokens.completion) {
+        headers = headers.set('Max-completion-tokens', selectedModel.maxTokens.completion.toString());
+      }
+
+      return this.http.post(url, requestBody, { headers });
     }
   }
 

@@ -42,7 +42,7 @@ export class NavColComponent implements OnInit {
     // Check for username in localStorage
     if (localStorage.getItem('username')) {
       this.username = localStorage.getItem('username') || '';
-    } else if (environment.production) {
+    } else if (!environment.useDummy) {
       // Only fetch the username when in production mode
       this.fetchUsername();
     }
