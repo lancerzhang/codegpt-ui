@@ -8,8 +8,8 @@
 }
 
 .chat-col {
-    position: relative;
     height: 100%;
-    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
     background-color: rgb(52, 53, 65);
 }
