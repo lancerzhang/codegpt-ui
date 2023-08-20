@@ -248,4 +248,8 @@ export class ChatWindowComponent {
   selectModel(model: any) {
     this.openaiConfigService.setSelectedModel(model);
   }
+
+  regenerate() {
+    // Your code here
+  }
 }

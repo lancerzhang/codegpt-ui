@@ -27,6 +27,12 @@
 </mat-list>
 <div class="divider-box"></div>
 <div class="input-container">
+  <div class="regenerate-button-row">
+    <button mat-raised-button (click)="regenerate()" aria-label="Regenerate">
+      <mat-icon>autorenew</mat-icon>
+      <span>Regenerate</span>
+    </button>
+  </div>
   <mat-form-field appearance="fill" class="input-field">
     <textarea #textarea matInput [matAutocomplete]="auto" [(ngModel)]="inputMessage" (ngModelChange)="onInputChange()"
       (keydown)="onKeyDown($event)" cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
