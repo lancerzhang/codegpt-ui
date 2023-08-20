@@ -1,13 +1,9 @@
-.input-container {
-    position: absolute;
+.bottom-div {
+    position: sticky;
     bottom: 0;
-    left: 50%;
-    /* Center the left edge of the div at the center of the column */
-    width: 90%;
-    transform: translateX(-50%);
-    /* Shift the div back by 50% of its width to center it */
     display: flex;
     flex-direction: column;
+    padding: 12px;
 }
 
 .regenerate-button-row {
