@@ -1,10 +1,13 @@
 .input-container {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    /* Center the left edge of the div at the center of the column */
+    width: 90%;
+    transform: translateX(-50%);
+    /* Shift the div back by 50% of its width to center it */
     display: flex;
     flex-direction: column;
-    position: fixed;
-    bottom: 0;
-    width: 75%;
-    margin-left: 24px;
 }
 
 .regenerate-button-row {

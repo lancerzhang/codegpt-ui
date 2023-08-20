@@ -27,7 +27,7 @@
 </mat-list>
 <div class="divider-box"></div>
 <div class="input-container">
-  <div class="regenerate-button-row">
+  <div *ngIf="messages.length > 0" class="regenerate-button-row">
     <button mat-raised-button (click)="regenerate()" aria-label="Regenerate">
       <mat-icon>autorenew</mat-icon>
       <span>Regenerate</span>
