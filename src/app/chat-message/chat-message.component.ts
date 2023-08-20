@@ -10,8 +10,8 @@ import { Message } from '../../models/message.model';
 export class ChatMessageComponent {
   @Input() message: Message;
   @Output() addPrompt = new EventEmitter<any>();
-  @Output() branchMessage = new EventEmitter<string>();
-  @Output() switchMessage = new EventEmitter<{ direction: 'prev' | 'next'; messageId: number }>();
+  @Output() editQuestion = new EventEmitter<string>();
+  @Output() switchQuestion = new EventEmitter<{ direction: 'prev' | 'next'; messageId: number }>();
 
   isEditing: boolean = false;
   editMessage: string;
@@ -36,7 +36,7 @@ export class ChatMessageComponent {
 
   submitEdit() {
     this.isEditing = false;
-    this.branchMessage.emit(this.editMessage);
+    this.editQuestion.emit(this.editMessage);
   }
 
   cancelEdit() {
@@ -45,13 +45,13 @@ export class ChatMessageComponent {
 
   prevMessage() {
     if (this.message.activePeerIndex! > 0) {
-      this.switchMessage.emit({ direction: 'prev', messageId: this.message.id! });
+      this.switchQuestion.emit({ direction: 'prev', messageId: this.message.id! });
     }
   }
 
   nextMessage() {
     if (this.message.activePeerIndex! < this.message.peersIds!.length - 1) {
-      this.switchMessage.emit({ direction: 'next', messageId: this.message.id! });
+      this.switchQuestion.emit({ direction: 'next', messageId: this.message.id! });
     }
   }
 

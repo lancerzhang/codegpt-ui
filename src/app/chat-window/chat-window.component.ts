@@ -66,49 +66,68 @@ export class ChatWindowComponent {
     this.messages = await this.loadMessagesWithChildren();
   }
 
-  async sendMessage(newText: string, parentId: number, childId?: number) {
-    if (newText) {
-      if (this.conversationId === -1) {
-        const title: string = newText.slice(0, 30);
-        const model: string = this.openaiConfig.selectedModel.model;
-        this.conversationId = await this.chatDb.createConversation({ title, model });
-        this.sharedService.emitRefreshChatHistory();
-      }
-
-      // for branch message
-      if (childId) {
-        await this.chatDb.updateMessage(childId, { isActive: false });
-        this.truncateMessages(childId);
-      }
-
-      // Prepare the input for getResponse
-      const messageArray = this.prepareMessages(newText);
-
-      // update messages of pages
-      let userMessage: Message = { conversationId: this.conversationId, sender: 'user', text: newText, isPrompt: false, parentId: parentId, isActive: true };
-      const userMessageId: number = await this.chatDb.createMessage(userMessage);
-      userMessage.id = userMessageId;
-      const botMessage: Message = { conversationId: this.conversationId, sender: 'bot', text: '', isPrompt: false, parentId: userMessageId, isActive: true, isLoading: true };
-
-      this.messages.push(userMessage);
-      this.messages.push(botMessage);
-
-      // Send the array of messages to getResponse
-      this.chatApiService.getResponse(messageArray).subscribe(async (response: any) => {
-        const respContent = response.data.choices[0].message.content;
-        userMessage.numTokens = response.data.usage.prompt_tokens;
-        await this.createBotMessage(respContent, response.data.usage.completion_tokens, botMessage, userMessageId, childId);
-      }, async error => {
-        let message;
-        if (error.status === 429) {
-          const selectedModel = this.openaiConfig.selectedModel;
-          message = `You have exceeded the chat limit of model ${selectedModel.model}, ${selectedModel.rateLimit.requests} requests in ${selectedModel.rateLimit.minutes} minutes`;
-        } else {
-          message = 'System error, please retry.';
-        }
-        await this.createBotMessage(message, 0, botMessage, userMessageId, childId);
-      });
+  async newConversation(newText: string) {
+    if (this.conversationId === -1) {
+      const title: string = newText.slice(0, 30);
+      const model: string = this.openaiConfig.selectedModel.model;
+      this.conversationId = await this.chatDb.createConversation({ title, model });
+      this.sharedService.emitRefreshChatHistory();
     }
+  }
+
+  async sendMessage(newText: string, parentId: number, childId?: number) {
+    var isRegenerate = true;
+    if (newText) {
+      isRegenerate = false;
+    }
+
+    await this.newConversation(newText)
+
+    var messageArray;
+    var userMessage: Message;
+    var userMessageId: number;
+    if (isRegenerate) {
+      const lastConversation = this.messages.slice(0, -1);
+      messageArray = lastConversation.map((obj: any) => ({ role: obj.role === 'bot' ? 'system' : 'user', content: obj.text }));
+      userMessage = this.messages[this.messages.length - 2]!;
+      userMessageId = userMessage.id!;
+      // delete last answer
+      this.truncateMessages(childId!);
+      await this.chatDb.updateMessage(childId!, { isActive: false });
+    } else {
+      // for edit question & regenerate
+      if (childId) {
+        // delete last question and answer
+        this.truncateMessages(childId);
+        await this.chatDb.updateMessage(childId, { isActive: false });
+      }
+      // Prepare the input for getResponse
+      messageArray = this.appendHistoryMessages(newText);
+      userMessage = { conversationId: this.conversationId, sender: 'user', text: newText, isPrompt: false, parentId: parentId, isActive: true };
+      userMessageId = await this.chatDb.createMessage(userMessage);
+      userMessage.id = userMessageId;
+      this.messages.push(userMessage);
+    }
+
+    const botMessage: Message = { conversationId: this.conversationId, sender: 'bot', text: '', isPrompt: false, parentId: userMessageId, isActive: true, isLoading: true };
+    this.messages.push(botMessage);
+
+    // Send the array of messages to getResponse
+    this.chatApiService.getResponse(messageArray).subscribe(async (response: any) => {
+      const respContent = response.data.choices[0].message.content;
+      userMessage.numTokens = response.data.usage.prompt_tokens;
+      await this.createBotMessage(respContent, response.data.usage.completion_tokens, botMessage, userMessageId, childId);
+    }, async error => {
+      let message;
+      if (error.status === 429) {
+        const selectedModel = this.openaiConfig.selectedModel;
+        message = `You have exceeded the chat limit of model ${selectedModel.model}, ${selectedModel.rateLimit.requests} requests in ${selectedModel.rateLimit.minutes} minutes`;
+      } else {
+        message = 'System error, please retry.';
+      }
+      await this.createBotMessage(message, 0, botMessage, userMessageId, childId);
+    });
+
   }
 
   async createBotMessage(text: string, numTokens: number, botMessage: any, userMessageId: number, childId?: number) {
@@ -131,28 +150,41 @@ export class ChatWindowComponent {
     this.messages = this.messages.slice(0, messageIdIndex);
   }
 
-  findParentId(): number {
+  // This function finds the ID of the parent message by retrieving the ID of the last message in the 'messages' array.
+  findLastMessageId(): number {
+    // Retrieve the last message from the 'messages' array
     const parentMessage: Message = this.messages.slice(-1)[0];
+
+    // Initialize the parentId variable to -1
     let parentId: number = -1;
+
+    // Check if a parentMessage exists
     if (parentMessage) {
+      // If a parentMessage exists, assign its ID to the parentId variable
       parentId = parentMessage.id!;
     }
+
+    // Return the parentId
     return parentId;
   }
 
   async sendNewMessage() {
-    const parentId = this.findParentId();
-    this.sendMessage(this.inputMessage, parentId);
-    this.inputMessage = '';
-    this.promptOptions = [];
+    if (this.inputMessage) {
+      const parentId = this.findLastMessageId();
+      this.sendMessage(this.inputMessage, parentId);
+      this.inputMessage = '';
+      this.promptOptions = [];
+    }
   }
 
-  async branchMessage(newText: string, childId: number) {
-    const parentId: number = await this.chatDb.getParentId(childId);
-    await this.sendMessage(newText, parentId, childId);
+  async editQuestion(newText: string, questionId: number) {
+    if (newText) {
+      const parentId: number = await this.chatDb.getParentId(questionId);
+      await this.sendMessage(newText, parentId, questionId);
+    }
   }
 
-  prepareMessages(newMessage: string): any[] {
+  appendHistoryMessages(newMessage: string): any[] {
     const maxChats = this.openaiConfig.selectedModel.session.chats;
     const maxTokens = this.openaiConfig.selectedModel.session.tokens;
     let currentTokens = 0;
@@ -214,7 +246,7 @@ export class ChatWindowComponent {
     }
   }
 
-  async switchMessage({ direction, messageId }: { direction: 'prev' | 'next'; messageId: number }) {
+  async switchQuestion({ direction, messageId }: { direction: 'prev' | 'next'; messageId: number }) {
     // Find the index of the messageId in the messages array.
     const messageIdIndex = this.messages.findIndex(message => message.id === messageId);
 
@@ -241,7 +273,7 @@ export class ChatWindowComponent {
   }
 
   async loadMessagesWithChildren() {
-    const parentId = this.findParentId();
+    const parentId = this.findLastMessageId();
     return await this.chatDb.loadMessagesWithChildren(this.conversationId, parentId);
   }
 
@@ -249,7 +281,9 @@ export class ChatWindowComponent {
     this.openaiConfigService.setSelectedModel(model);
   }
 
-  regenerate() {
-    // Your code here
+  async regenerate() {
+    const lastAnswer: Message = this.messages.slice(-1)[0];
+    const lastQustion: Message = this.messages[this.messages.length - 2]!;
+    await this.sendMessage('', lastQustion.id!, lastAnswer.id);
   }
 }

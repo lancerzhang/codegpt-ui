@@ -21,8 +21,8 @@
   Model: {{openaiConfig.selectedModel.model}}
 </div>
 <mat-list *ngFor="let message of messages">
-  <app-chat-message [message]="message" (addPrompt)="addPrompt($event)" (switchMessage)="switchMessage($event)"
-    (branchMessage)="branchMessage($event, message.id!)">
+  <app-chat-message [message]="message" (addPrompt)="addPrompt($event)" (switchQuestion)="switchQuestion($event)"
+    (editQuestion)="editQuestion($event, message.id!)">
   </app-chat-message>
 </mat-list>
 <div class="divider-box"></div>
