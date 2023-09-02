@@ -13,6 +13,10 @@
           <mat-icon (click)="nextMessage()"
             *ngIf="message.activePeerIndex! < message.peersIds.length - 1">chevron_right</mat-icon>
         </div>
+        <mat-icon (click)="copyMessageToClipboard(message.text)">
+          {{isCopied ? 'check' : 'content_copy'}}
+        </mat-icon>
+
         <mat-spinner *ngIf="message.isLoading" [diameter]="24"></mat-spinner>
       </div>
       <div class="flex-col vertical-space">

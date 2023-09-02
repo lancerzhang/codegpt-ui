@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Message } from '../../models/message.model';
@@ -17,7 +18,7 @@ export class ChatMessageComponent {
   editMessage: string;
   htmlContent: SafeHtml;
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(private sanitizer: DomSanitizer, private clipboard: Clipboard) {
   }
 
   ngOnInit(): void {
@@ -53,6 +54,19 @@ export class ChatMessageComponent {
     if (this.message.activePeerIndex! < this.message.peersIds!.length - 1) {
       this.switchQuestion.emit({ direction: 'next', messageId: this.message.id! });
     }
+  }
+
+  isCopied = false; // Add this variable to your component
+
+  // Function to copy message text
+  copyMessageToClipboard(text: string) {
+    this.clipboard.copy(text);
+    this.isCopied = true;
+
+    // Reset after 1 second
+    setTimeout(() => {
+      this.isCopied = false;
+    }, 1000);
   }
 
 }
